@@ -1,7 +1,8 @@
 import qs from "qs";
 import { cacheLife } from "next/cache";
 
-export const STRAPI_BASE_URL = process.env.STRAPI_BASE_URL || "http://localhost:1337";
+export const STRAPI_BASE_URL =
+  process.env.STRAPI_BASE_URL || "http://localhost:1337";
 
 const QUERY_HOME_PAGE = {
   populate: {
@@ -57,6 +58,10 @@ export async function registerUserService(userData: object) {
       body: JSON.stringify(userData),
     });
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     const data = await response.json();
     return data;
   } catch (error) {
@@ -76,6 +81,10 @@ export async function loginUserService(userData: object) {
       },
       body: JSON.stringify(userData),
     });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
     const data = await response.json();
     return data;

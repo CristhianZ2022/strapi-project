@@ -19,7 +19,6 @@ export async function registerUserAction(
   prevState: FormState,
   formdData: FormData,
 ): Promise<FormState> {
-  console.log("Hello from registerUserAction");
 
   const fields = {
     username: formdData.get("username") as string,

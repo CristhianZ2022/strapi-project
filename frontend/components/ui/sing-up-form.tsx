@@ -49,8 +49,6 @@ export function SignupForm() {
     INITIAL_STATE
   );
 
-  console.log(formState);
-
   return (
     <div className={styles.container}>
       <form action={formAction}>
