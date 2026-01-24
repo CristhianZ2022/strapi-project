@@ -1,6 +1,19 @@
 import qs from "qs";
 import { cacheLife } from "next/cache";
 
+interface LoginData {
+  identifier: string;
+  password: string;
+}
+
+interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+}
+
+type UserData = LoginData | RegisterData;
+
 export const STRAPI_BASE_URL =
   process.env.STRAPI_BASE_URL || "http://localhost:1337";
 
@@ -46,8 +59,8 @@ export async function getStrapiData(url: string) {
   }
 }
 
-export async function registerUserService(userData: object) {
-  const url = new URL(`${STRAPI_BASE_URL}/api/auth/local/register`);
+export async function fetchAuth(endopoint: string, userData: UserData) {
+  const url = new URL(`${STRAPI_BASE_URL}/api/auth/${endopoint}`);
 
   try {
     const response = await fetch(url, {
@@ -58,38 +71,24 @@ export async function registerUserService(userData: object) {
       body: JSON.stringify(userData),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // Retornar el error de Strapi sin lanzar excepción
+      return {
+        error: data.error?.message || `HTTP error! status: ${response.status}`,
+        ...data,
+      };
     }
 
-    const data = await response.json();
     return data;
   } catch (error) {
     console.error("Error fetching data:", error);
-    throw error;
+    return {
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 }
 
-export async function loginUserService(userData: object) {
-  const url = new URL(`${STRAPI_BASE_URL}/api/auth/local`);
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error login data:", error);
-    throw error;
-  }
-}
+export const loginUserService = (data: LoginData) => fetchAuth("local", data);
+export const registerUserService = (data: RegisterData) => fetchAuth("local/register", data);

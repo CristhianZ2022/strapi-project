@@ -14,6 +14,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { FormState } from "@/validations/auth";
+import { useActionState } from "react";
+import { actions } from "@/actions";
+import { FormError } from "./form-error";
 
 const styles = {
   container: "w-full max-w-md",
@@ -27,10 +31,25 @@ const styles = {
   link: "ml-2 text-pink-500",
 };
 
+const INITIAL_STATE: FormState = {
+  success: false,
+  message: undefined,
+  strapiErrors: null,
+  zodErrors: null,
+  data: {
+    identifier: "",
+    password: "",
+  },
+};
+
 export function SigninForm() {
+  const [formState, formAction] = useActionState(
+    actions.auth.loginUserAction,
+    INITIAL_STATE
+  );
   return (
     <div className={styles.container}>
-      <form>
+      <form action={formAction}>
         <Card>
           <CardHeader className={styles.header}>
             <CardTitle className={styles.title}>Sign In</CardTitle>
@@ -40,13 +59,15 @@ export function SigninForm() {
           </CardHeader>
           <CardContent className={styles.content}>
             <div className={styles.fieldGroup}>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email or Username</Label>
               <Input
                 id="identifier"
                 name="identifier"
                 type="text"
                 placeholder="username or email"
+                defaultValue={formState.data?.identifier ?? ""}
               />
+              <FormError error={formState.zodErrors?.identifier} />
             </div>
             <div className={styles.fieldGroup}>
               <Label htmlFor="password">Password</Label>
@@ -55,11 +76,18 @@ export function SigninForm() {
                 name="password"
                 type="password"
                 placeholder="password"
+                defaultValue={formState.data?.password ?? ""}
               />
+              <FormError error={formState.zodErrors?.password} />
             </div>
           </CardContent>
           <CardFooter className={styles.footer}>
             <Button className={styles.button}>Sign In</Button>
+            {formState.strapiErrors && (
+              <p className="text-pink-500 text-xs italic mt-1 py-2">
+                {formState.strapiErrors.message}
+              </p>
+            )}
           </CardFooter>
         </Card>
         <div className={styles.prompt}>
