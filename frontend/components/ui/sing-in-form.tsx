@@ -62,37 +62,39 @@ export function SigninForm() {
             </CardDescription>
           </CardHeader>
           <CardContent className={styles.content}>
-            <div className={styles.fieldGroup}>
-              <Label htmlFor="email">Email or Username</Label>
-              <Input
-                id="identifier"
-                name="identifier"
-                type="text"
-                placeholder="username or email"
-                defaultValue={formState.data?.identifier ?? ""}
-              />
-              <FormError error={formState.zodErrors?.identifier} />
-            </div>
-            <div className={styles.fieldGroup}>
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
+            <div>
+              <div className={styles.fieldGroup}>
+                <Label htmlFor="email">Email or Username</Label>
                 <Input
-                  id="password"
-                  name="password"
-                  type={inputType}
-                  placeholder="password"
-                  defaultValue={formState.data?.password ?? ""}
-                  className="pr-10"
+                  id="identifier"
+                  name="identifier"
+                  type="text"
+                  placeholder="username or email"
+                  defaultValue={formState.data?.identifier ?? ""}
                 />
-                <button
-                  type="button"
-                  onClick={togglePassword}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
+                <FormError error={formState.zodErrors?.identifier} />
               </div>
-              <FormError error={formState.zodErrors?.password} />
+              <div className={styles.fieldGroup}>
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={inputType}
+                    placeholder="password"
+                    defaultValue={formState.data?.password ?? ""}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePassword}
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+                <FormError error={formState.zodErrors?.password} />
+              </div>
             </div>
           </CardContent>
           <CardFooter className={styles.footer}>

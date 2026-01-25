@@ -10,6 +10,8 @@ export const SigninFormSchema = z.object({
     .max(100, "Password must be less than 100 characters"),
 });
 
+const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/;
+
 export const SignupFormSchema = z
   .object({
     username: z
@@ -20,7 +22,11 @@ export const SignupFormSchema = z
     password: z
       .string()
       .min(6, "Password must be at least 6 characters")
-      .max(100, "Password must be less than 100 characters"),
+      .max(30, "Password must be less than 100 characters")
+      .regex(
+        strongPasswordRegex,
+        "La contraseña debe incluír al menos una letra en mayúscula, una letra en minúscula y un número.",
+      ),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {

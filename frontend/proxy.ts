@@ -5,7 +5,7 @@ import { STRAPI_BASE_URL } from "./lib/strapi";
 const protectedRoutes = ["/dashboard"];
 
 function checkIsProtectedRoute(path: string) {
-  return protectedRoutes.includes(path);
+  return protectedRoutes.some((route) => path.startsWith(route));
 }
 
 export async function proxy(req: NextRequest) {
