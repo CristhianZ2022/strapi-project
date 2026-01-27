@@ -1,4 +1,4 @@
-import { STRAPI_BASE_URL } from "@/lib/strapi";
+import { STRAPI_BASE_URL } from "@/lib/login-register";
 import Image from "next/image";
 import Link from "next/link";
 

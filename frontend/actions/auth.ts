@@ -1,7 +1,11 @@
 "use server";
 
-import { loginUserService, registerUserService } from "@/lib/strapi";
-import { SigninFormSchema, SignupFormSchema, type FormState } from "@/validations/auth";
+import { loginUserService, registerUserService } from "@/lib/login-register";
+import {
+  SigninFormSchema,
+  SignupFormSchema,
+  type FormState,
+} from "@/validations/auth";
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -19,7 +23,6 @@ export async function registerUserAction(
   prevState: FormState,
   formdData: FormData,
 ): Promise<FormState> {
-
   const fields = {
     username: formdData.get("username") as string,
     email: formdData.get("email") as string,
@@ -68,12 +71,10 @@ export async function registerUserAction(
   redirect("/dashboard");
 }
 
-
 export async function loginUserAction(
   prevState: FormState,
   formdData: FormData,
 ): Promise<FormState> {
-
   const fields = {
     identifier: formdData.get("identifier") as string,
     password: formdData.get("password") as string,

@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import { STRAPI_BASE_URL } from "./lib/strapi";
+import { STRAPI_BASE_URL } from "./lib/login-register";
 
 const protectedRoutes = ["/dashboard"];
 
