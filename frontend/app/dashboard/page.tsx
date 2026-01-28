@@ -1,11 +1,14 @@
 "use client";
 
-import { Clients } from "@/components/ui/clients";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ClientsList from "@/components/ui/clients";
+
+const queryClient = new QueryClient();
 
 export default function DashboardRoute() {
   return (
-    <div>
-      <Clients />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <ClientsList />
+    </QueryClientProvider>
   );
 }

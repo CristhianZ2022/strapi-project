@@ -1,5 +1,6 @@
 "use server";
 
+import { Client } from "@/types/typeClients";
 import { STRAPI_BASE_URL } from "./login-register";
 import { cookies } from "next/headers";
 
@@ -8,7 +9,7 @@ export async function getToken(): Promise<string | null> {
   return cookieStore.get("jwt")?.value ?? null;
 }
 
-export async function fetchClients() {
+export async function fetchClients(): Promise<{ data: Client[] }> {
   try {
     const token = await getToken();
     const headers: Record<string, string> = {
@@ -22,11 +23,14 @@ export async function fetchClients() {
     const getClients = await fetch(`${STRAPI_BASE_URL}/api/clientes`, {
       headers,
     });
+
     const resultFetchClients = await getClients.json();
 
     if (!getClients.ok) {
       throw new Error(`HTTP error! status: ${getClients.status}`);
     }
+
+    console.log(resultFetchClients);
 
     return resultFetchClients;
   } catch (error) {
