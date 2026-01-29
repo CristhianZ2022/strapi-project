@@ -6,5 +6,6 @@ export function useClients() {
     queryKey: ["clients"],
     queryFn: fetchClients,
     staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: false,
   });
 }

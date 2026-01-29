@@ -1,12 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { actions } from "@/actions";
-import { useActionState } from "react";
-import { type FormState } from "@/validations/auth";
-import { FormError } from "./form-error";
-import { usePasswordToggle } from "@/hooks/usePasswordToggle";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import {
   CardTitle,
@@ -16,15 +10,24 @@ import {
   CardFooter,
   Card,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { FormState } from "@/validations/auth";
+import { useActionState } from "react";
+import { actions } from "@/actions";
+import { FormError } from "../../ui/form-error";
+import { usePasswordToggle } from "@/hooks/usePasswordToggle";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const styles = {
   container: "w-full max-w-md",
-  togglePassword: "absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors",
+  togglePassword:
+    "absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors",
   strapiError: "text-pink-600 dark:text-pink-400 text-xs italic text-center",
-  button: "w-full bg-indigo-600 hover:bg-indigo-700 text-white transition-colors",
+  button:
+    "w-full bg-indigo-600 hover:bg-indigo-700 text-white transition-colors",
   prompt: "mt-6 text-center text-sm text-gray-600 dark:text-gray-400",
   link: "ml-1 text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium transition-colors",
 };
@@ -35,18 +38,16 @@ const INITIAL_STATE: FormState = {
   strapiErrors: null,
   zodErrors: null,
   data: {
-    username: "",
+    identifier: "",
     password: "",
-    email: "",
   },
 };
 
-export function SignupForm() {
+export function SigninForm() {
   const [formState, formAction] = useActionState(
-    actions.auth.registerUserAction,
+    actions.auth.loginUserAction,
     INITIAL_STATE,
   );
-
   const { showPassword, togglePassword, inputType } = usePasswordToggle();
 
   return (
@@ -54,33 +55,22 @@ export function SignupForm() {
       <form action={formAction}>
         <Card>
           <CardHeader>
-            <CardTitle>Sign Up</CardTitle>
+            <CardTitle>Sign In</CardTitle>
             <CardDescription>
-              Enter your details to create a new account
+              Enter your details to sign in to your account
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="identifier">Email or Username</Label>
               <Input
-                id="username"
-                name="username"
+                id="identifier"
+                name="identifier"
                 type="text"
-                placeholder="username"
-                defaultValue={formState.data?.username ?? ""}
+                placeholder="username or email"
+                defaultValue={formState.data?.identifier ?? ""}
               />
-              <FormError error={formState.zodErrors?.username} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="name@example.com"
-                defaultValue={formState.data?.email ?? ""}
-              />
-              <FormError error={formState.zodErrors?.email} />
+              <FormError error={formState.zodErrors?.identifier} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -103,22 +93,9 @@ export function SignupForm() {
               </div>
               <FormError error={formState.zodErrors?.password} />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                placeholder="confirm password"
-                defaultValue={formState.data?.password ?? ""}
-              />
-              <FormError error={formState.zodErrors?.confirmPassword} />
-            </div>
           </CardContent>
           <CardFooter>
-            <Button className={styles.button}>
-              Sign Up
-            </Button>
+            <Button className={styles.button}>Sign In</Button>
             {formState.strapiErrors && (
               <p className={styles.strapiError}>
                 {formState.strapiErrors.message}
@@ -127,12 +104,9 @@ export function SignupForm() {
           </CardFooter>
         </Card>
         <div className={styles.prompt}>
-          Have an account?
-          <Link
-            className={styles.link}
-            href="signin"
-          >
-            Sign In
+          Don&apos;t have an account?
+          <Link className={styles.link} href="signup">
+            Sign Up
           </Link>
         </div>
       </form>

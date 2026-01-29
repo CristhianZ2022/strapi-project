@@ -1,9 +1,9 @@
-import { SigninForm } from "@/components/ui/sing-in-form";
+import { SigninForm } from "@/components/pages/auth/sing-in-form";
 
 export default function SignInRoute() {
-  return(
+  return (
     <div>
       <SigninForm />
     </div>
-  )
+  );
 }

@@ -33,7 +33,7 @@ export default function ClientsList() {
         </p>
         <p>
           <span className="font-medium text-gray-900">💰 Valores:</span>{" "}
-          {client.valores}
+          ${client.valores}
         </p>
         <p>
           <span className="font-medium text-gray-900">🏙️ Ciudad:</span>{" "}

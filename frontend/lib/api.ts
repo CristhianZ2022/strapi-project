@@ -30,8 +30,6 @@ export async function fetchClients(): Promise<{ data: Client[] }> {
       throw new Error(`HTTP error! status: ${getClients.status}`);
     }
 
-    console.log(resultFetchClients);
-
     return resultFetchClients;
   } catch (error) {
     console.error("Error fetching data:", error);
