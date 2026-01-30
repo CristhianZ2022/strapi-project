@@ -13,6 +13,7 @@ const styles = {
     "flex-1 h-6 px-3 text-xs placeholder:text-xs text-center bg-gray-50/70 dark:bg-gray-900/70 shadow-none focus-visible:ring-1 focus-visible:ring-offset-0 border-none outline-none rounded-l-none",
   searchButton:
     "h-6 px-3 text-black-400/80 text-xs border-r border-gray-300 dark:border-gray-700 cursor-pointer flex items-center justify-center bg-gray-50/70 dark:bg-gray-900/70 hover:bg-gray-100/70 dark:hover:bg-gray-800/70 transition-colors rounded-l",
+  icon: "text-indigo-500 dark:text-indigo-400"
 };
 
 export default function SearchInput({
@@ -25,7 +26,7 @@ export default function SearchInput({
       className={`${styles.searchField}`}
     >
       <button className={styles.searchButton} type="button">
-        <FaSearch />
+        <FaSearch className={styles.icon} />
       </button>
       <Input
         type={type}

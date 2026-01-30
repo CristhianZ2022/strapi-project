@@ -1,5 +1,6 @@
 "use client";
 
+import HeaderControl from "@/components/pages/dashboard/header-control";
 import HeaderSearch from "@/components/pages/dashboard/header-search";
 
 // import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -12,6 +13,9 @@ export default function DashboardRoute() {
     // <QueryClientProvider client={queryClient}>
     // <ClientsList />
     // </QueryClientProvider>
-    <HeaderSearch />
+    <>
+      <HeaderControl />
+      <HeaderSearch />
+    </>
   );
 }
