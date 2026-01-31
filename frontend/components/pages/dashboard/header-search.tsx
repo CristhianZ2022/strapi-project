@@ -13,7 +13,7 @@ export default function HeaderSearch() {
 
   const styles = {
     header:
-      "w-full bg-gray-200 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 p-1.5 sticky top-0 z-20 shadow-sm",
+      "w-full bg-gray-200 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 p-1.5 top-0 z-20 shadow-sm",
     container: "max-w-7xl",
     searchRow:
       "flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-start",
