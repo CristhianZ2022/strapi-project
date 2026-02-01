@@ -1,0 +1,20 @@
+import * as React from "react";
+
+import { cn } from "@/lib/utils";
+
+function Li({ className, ...props }: React.ComponentProps<"li">) {
+  return (
+    <li
+      data-slot="li"
+      className={cn(
+        "flex items-center gap-1 px-2 py-1.5 hover:bg-gray-300 dark:hover:bg-gray-800 rounded transition-colors cursor-pointer whitespace-nowrap",
+        className,
+      )}
+      {...props}
+    >
+      {props.children}
+    </li>
+  );
+}
+
+export { Li };

@@ -1,15 +1,25 @@
-import LiControlHeader, { Li } from "@/components/ui/li-control-header";
-import { useClickOutside } from "@/hooks/useClickOutside";
+import { Li } from "@/components/ui/li";
+import LiControlHeader from "@/components/ui/li-control-header";
 import { useState } from "react";
-import { FaCaretRight } from "react-icons/fa";
-import { FaUser } from "react-icons/fa6";
+import {
+  FaUser,
+  FaMagnifyingGlass,
+  FaPenToSquare,
+  FaSliders,
+  FaCaretRight,
+  FaGenderless,
+} from "react-icons/fa6";
+
+const styles = {
+  ul: "flex items-center gap-1 text-xs font-medium text-gray-600 dark:text-gray-300",
+  icon: "text-indigo-400 text-xs",
+  caret: "text-indigo-400 text-xs transition-all duration-300 rotate-0",
+};
 
 export default function HeaderControl() {
   const [active, setActive] = useState("");
 
-  const menuRef = useClickOutside<HTMLLIElement>(() => {
-    if (active) setActive("");
-  });
+  
 
   return (
     <header className="flex justify-between w-full bg-gray-100 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 px-3 py-0.5 sticky top-0 z-20 shadow-sm">
@@ -30,32 +40,63 @@ export default function HeaderControl() {
         </div>
 
         <nav className="flex items-center">
-          <ul className="flex items-center gap-1 text-xs font-medium text-gray-600 dark:text-gray-300">
+          <ul className={styles.ul}>
             <LiControlHeader
-              ref={menuRef}
+              setActive={setActive}
+              icon={<FaGenderless className={styles.icon} />}
+              caret={
+                <FaCaretRight
+                  className={` ${styles.caret} ${active === "control" ? "rotate-90" : "rotate-0"}`}
+                />
+              }
+              id="control"
               text="Control"
-              active={active === "control"}
+              isActive={active === "control"}
               onClick={(e) => {
                 e.stopPropagation();
                 setActive((prev) => (prev === "control" ? "" : "control"));
               }}
-            />
+            >
+              <Li>
+                <FaMagnifyingGlass className={styles.icon} />
+                <span>Busqueda de contratos</span>
+              </Li>
+              <Li>
+                <FaUser className={styles.icon} />
+                <span>Contratos</span>
+              </Li>
+              <Li>
+                <FaPenToSquare className={styles.icon} />
+                <span>Modificar contratos</span>
+              </Li>
+              <Li>
+                <FaSliders className={styles.icon} />
+                <span>Soporte</span>
+              </Li>
+            </LiControlHeader>
           </ul>
         </nav>
       </div>
       <nav className="flex items-center justify-end">
         <ul className="flex items-center gap-1 text-xs font-medium text-gray-600 dark:text-gray-300">
-          <Li>
-            <FaUser className="text-indigo-400 text-xs" />
-            <span>Usuario</span>
-            <FaCaretRight
-              className={`text-indigo-400 text-xs transition-all duration-300 ${active ? "rotate-90" : "rotate-0"}`}
-            />
-          </Li>
+          <LiControlHeader
+            setActive={setActive}
+            id="usuario"
+            text="User"
+            icon={<FaUser className="text-indigo-400 text-xs" />}
+            caret={
+              <FaCaretRight
+                className={`${styles.caret} ${active === "usuario" ? "rotate-90" : "rotate-0"}`}
+              />
+            }
+            isActive={active === "usuario"}
+            onClick={(e) => {
+              e.stopPropagation();
+              setActive((prev) => (prev === "usuario" ? "" : "usuario"));
+            }}
+          ></LiControlHeader>
         </ul>
       </nav>
     </header>
   );
 }
-
-// MAÑANA 30 DE ENERO A DARLE CAÑA CON LA UX Y LAS FUNCIONES DE ESTE COMPONENTE
