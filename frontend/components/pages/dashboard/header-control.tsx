@@ -1,3 +1,4 @@
+import { logoutUserAction } from "@/actions/auth";
 import { Li } from "@/components/ui/li";
 import LiControlHeader from "@/components/ui/li-control-header";
 import { useState } from "react";
@@ -20,6 +21,10 @@ const styles = {
 
 export default function HeaderControl() {
   const [active, setActive] = useState("");
+
+  const handleLogout = () => {
+    logoutUserAction();
+  };
 
   return (
     <header className="flex justify-between w-full bg-gray-100 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 px-3 py-0.5 sticky top-0 z-20 shadow-sm">
@@ -103,10 +108,12 @@ export default function HeaderControl() {
               <FaKey className={styles.icon} />
               <span>Cambiar Clave</span>
             </Li>
-            <Li>
-              <FaPowerOff className={styles.icon} />
-              <span>Cerrar Sesión</span>
-            </Li>
+            <button className="w-full" onClick={handleLogout}>
+              <Li>
+                <FaPowerOff className={styles.icon} />
+                <span>Cerrar Sesión</span>
+              </Li>
+            </button>
           </LiControlHeader>
         </ul>
       </nav>

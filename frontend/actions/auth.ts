@@ -116,3 +116,9 @@ export async function loginUserAction(
   cookieStore.set("jwt", response.jwt, cookieConfig);
   redirect("/dashboard");
 }
+
+export async function logoutUserAction(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete("jwt");
+  redirect("/signin");
+}
