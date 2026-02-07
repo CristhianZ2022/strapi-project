@@ -74,7 +74,6 @@ export async function fetchAuth(endopoint: string, userData: UserData) {
     const data = await response.json();
 
     if (!response.ok) {
-      // Retornar el error de Strapi sin lanzar excepción
       return {
         error: data.error?.message || `HTTP error! status: ${response.status}`,
         ...data,

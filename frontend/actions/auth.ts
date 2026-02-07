@@ -120,8 +120,6 @@ export async function loginUserAction(
 export async function logoutUserAction(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete("jwt");
-  
-  
 
   redirect("/signin");
 }

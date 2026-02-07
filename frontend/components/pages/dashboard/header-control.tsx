@@ -6,17 +6,8 @@ import LiControlHeader from "@/components/ui/li-control-header";
 import { Li } from "@/components/ui/li";
 
 import { useState } from "react";
-
-import {
-  FaUser,
-  FaMagnifyingGlass,
-  FaPenToSquare,
-  FaSliders,
-  FaCaretRight,
-  FaGenderless,
-  FaKey,
-  FaPowerOff,
-} from "react-icons/fa6";
+import { ArrowRigthI, CircleI, KeyI, PencilModifYI, PowerOffI, SearchI, SupportI, UserI } from "@/components/icons/Icons";
+import { Ul } from "@/components/ui/ul";
 
 interface HeaderControlProps {
   initialUser: { username: string } | null;
@@ -29,8 +20,8 @@ const styles = {
   a: "flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded",
   logo: "w-5 h-5 bg-indigo-600 rounded flex items-center justify-center text-white text-[10px] font-bold shrink-0",
   ul: "flex items-center gap-1 text-xs font-medium text-gray-600 dark:text-gray-300",
-  icon: "text-indigo-400 text-xs",
-  caret: "text-indigo-400 text-xs transition-all duration-300 rotate-0",
+  icon: "text-indigo-400 text-xs w-[14px] h-[14px]",
+  caret: "text-indigo-400 text-xs transition-all duration-300 rotate-0 w-3 h-4",
 };
 
 export default function HeaderControl({ initialUser }: HeaderControlProps) {
@@ -60,12 +51,12 @@ export default function HeaderControl({ initialUser }: HeaderControlProps) {
         aria-label="Navegación principal"
         className="flex flex-1 justify-between items-center"
       >
-        <ul className={styles.ul}>
+        <Ul className={styles.ul}>
           <LiControlHeader
             setActive={setActive}
-            icon={<FaGenderless className={styles.icon} />}
+            icon={<CircleI className={styles.icon} />}
             caret={
-              <FaCaretRight
+              <ArrowRigthI
                 className={` ${styles.caret} ${active === "control" ? "rotate-90" : "rotate-0"}`}
               />
             }
@@ -78,31 +69,31 @@ export default function HeaderControl({ initialUser }: HeaderControlProps) {
             }}
           >
             <Li>
-              <FaMagnifyingGlass className={styles.icon} />
+              <SearchI className={styles.icon} />
               <span>Busqueda de contratos</span>
             </Li>
             <Li>
-              <FaUser className={styles.icon} />
+              <UserI className={styles.icon} />
               <span>Contratos</span>
             </Li>
             <Li>
-              <FaPenToSquare className={styles.icon} />
+              <PencilModifYI className={styles.icon} />
               <span>Modificar contratos</span>
             </Li>
             <Li>
-              <FaSliders className={styles.icon} />
+              <SupportI className={styles.icon} />
               <span>Soporte</span>
             </Li>
           </LiControlHeader>
-        </ul>
-        <ul className={styles.ul}>
+        </Ul>
+        <Ul className={styles.ul}>
           <LiControlHeader
             setActive={setActive}
             id="usuario"
             text={data}
-            icon={<FaUser className="text-indigo-400 text-xs" />}
+            icon={<UserI className={styles.icon} />}
             caret={
-              <FaCaretRight
+              <ArrowRigthI
                 className={`${styles.caret} ${active === "usuario" ? "rotate-90" : "rotate-0"}`}
               />
             }
@@ -113,21 +104,21 @@ export default function HeaderControl({ initialUser }: HeaderControlProps) {
             }}
           >
             <Li>
-              <FaUser className={styles.icon} />
+              <UserI className={styles.icon} />
               <span>{initialUser?.username}</span>
             </Li>
             <Li>
-              <FaKey className={styles.icon} />
+              <KeyI className={styles.icon} />
               <span>Cambiar Clave</span>
             </Li>
-            <button className="w-full" onClick={handleLogout}>
+            <div className="w-full" onClick={handleLogout}>
               <Li>
-                <FaPowerOff className={styles.icon} />
+                <PowerOffI className={styles.icon} />
                 <span>Cerrar Sesión</span>
               </Li>
-            </button>
+            </div>
           </LiControlHeader>
-        </ul>
+        </Ul>
       </nav>
     </header>
   );
