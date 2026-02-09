@@ -1,4 +1,4 @@
-import { fetchUser } from "@/lib/api";
+import { fetchUser } from "@/lib/endpoint-api";
 import { useQuery } from "@tanstack/react-query";
 
 export function useUser() {

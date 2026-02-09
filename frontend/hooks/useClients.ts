@@ -1,4 +1,4 @@
-import { fetchClients } from '@/lib/api';
+import { fetchClients } from "@/lib/endpoint-api";
 import { useQuery } from "@tanstack/react-query";
 
 export function useClients() {

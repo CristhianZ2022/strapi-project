@@ -1,8 +1,12 @@
 import HeaderControl from "@/components/pages/dashboard/header-control";
-import { fetchUser } from "@/lib/api";
+import { fetchUser } from "@/lib/endpoint-api";
 import type { ReactNode } from "react";
 
-export default async function DashboardLayout({ children }: { children: ReactNode }) {
+export default async function DashboardLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   let user = null;
 
   try {
