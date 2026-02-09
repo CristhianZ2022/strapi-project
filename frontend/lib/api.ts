@@ -1,69 +1,73 @@
 "use server";
 
-import { Client, User } from "@/types/typeClients";
-import { STRAPI_BASE_URL } from "./login-register";
 import { cookies } from "next/headers";
+import { STRAPI_BASE_URL } from "./login-register";
 
-export async function getToken(): Promise<string | null> {
+async function getAuthToken() {
   const cookieStore = await cookies();
-  return cookieStore.get("jwt")?.value ?? null;
+  return cookieStore.get("jwt")?.value || null;
 }
 
-export async function fetchClients(): Promise<{ data: Client[] }> {
-  try {
-    const token = await getToken();
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
+export async function fetchStrapi(
+  endpoint: string,
+  options: RequestInit = {},
+  retry = true
+): Promise<Response> {
+  const authToken = await getAuthToken();
 
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    ...options.headers,
+  })
 
-    const getClients = await fetch(`${STRAPI_BASE_URL}/api/clientes`, {
-      headers,
+  if(authToken) headers.set('Authorization', `Bearer ${authToken}`);
+  
+  const fetchUrl = `${STRAPI_BASE_URL}${endpoint}`;
+
+  const res = await fetch(fetchUrl, {
+    ...options,
+    headers,
+    credentials: "include",
+    cache: "no-store",
+  });
+
+  if(res.status === 401 && retry && !endpoint.includes('/auth/refresh')) {
+    const refreshRes = await fetch(`${STRAPI_BASE_URL}/api/auth/refresh`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
     });
 
-    const resultFetchClients = await getClients.json();
-
-    if (!getClients.ok) {
-      throw new Error(`HTTP error! status: ${getClients.status}`);
+    if(refreshRes.ok) {
+      const { jwt: newAuthToken } = await refreshRes.json();
+      if(newAuthToken) {
+        const cookieStore = await cookies();
+        cookieStore.set('jwt', newAuthToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 5 * 60 * 60,
+          path: '/',
+        });
+      }
+      
+      return fetchStrapi(endpoint, options, false);
+    } else { 
+      throw new Error('Sesión expirada, Inicia sesión nuevamente');
     }
-
-    return resultFetchClients;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    throw new Error("Error fetching data");
   }
+
+  return res;
 }
 
-export async function fetchUser(): Promise<User> {
-  try {
-    const token = await getToken();
-
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    const getUser = await fetch(`${STRAPI_BASE_URL}/api/users/me`, {
-      headers,
-      cache: "no-store" // para evitar que el navegador almacene la información en caché antigua
-    });
-
-    const resultFetchUser = await getUser.json();
-
-    const { username, email } = resultFetchUser;
-
-    return {
-      username: String(username),
-      email: String(email),
-    };
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-    return { username: "", email: "" };
+export async function strapiJson<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const res = await fetchStrapi(endpoint, options);
+  if(!res.ok) {
+    const errorText = await res.text();
+    throw new Error(errorText || 'Error al obtener datos');
   }
+
+  return res.json() as Promise<T>;
 }
+
+// EN CONSTRUCCIÓN, ESTOY REALIZANDO LA FUNCION FETCH GLOBAL PARA PETICIONES COMO AL USER, CLIENTES, ETC.
