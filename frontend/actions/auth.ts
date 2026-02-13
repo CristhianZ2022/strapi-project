@@ -131,13 +131,12 @@ export async function loginUserAction(
 
 export async function changePasswordAction(
   prevState: FormState,
-  formdData: FormData,
-) {
-
+  formData: FormData,
+): Promise<FormState> {
   const fields = {
-    oldPassword: formdData.get("oldPassword") as string,
-    password: formdData.get("password") as string,
-    confirmPassword: formdData.get("confirmPassword") as string,
+    oldPassword: formData.get("oldPassword") as string,
+    password: formData.get("password") as string,
+    confirmPassword: formData.get("confirmPassword") as string,
   };
 
   const validateFields = ChangePasswordFormSchema.safeParse(fields);
@@ -154,28 +153,66 @@ export async function changePasswordAction(
         ...prevState.data,
         ...fields,
       },
-    }
+    };
   }
 
+  const data = {
+    currentPassword: validateFields.data.oldPassword,
+    password: validateFields.data.password,
+    passwordConfirmation: validateFields.data.confirmPassword,
+  };
+
   try {
-    const res = await fetchStrapi("/api/auth/local/change-password", {
-      body: JSON.stringify({
-        validateFields,
-      }),
+    const res = await fetchStrapi("/api/auth/change-password", {
+      method: "POST",
+      body: JSON.stringify(data),
     });
 
-
     if (!res.ok) {
-      const errorData = await res.json();
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage =
+        errorData.error?.message ||
+        errorData.message ||
+        "Error al cambiar la contraseña (verifica la contraseña actual)";
       return {
         success: false,
-        message: errorData.error?.message || "Error changing password",
+        message: errorMessage,
+        strapiErrors: errorData,
+        zodErrors: null,
+        data: {
+          ...prevState.data,
+          ...fields,
+        },
       };
     }
 
-    return { success: true, message: "Password changed successfully" };
+    const result = await res.json();
+
+    if (result.jwt) {
+      const cookieStore = await cookies();
+      cookieStore.set("jwt", result.jwt, cookieConfig);
+    }
+
+    return {
+      success: true,
+      message: "Password changed successfully",
+      data: undefined,
+      strapiErrors: null,
+      zodErrors: null,
+    };
   } catch (error) {
     console.error("Error changing password:", error);
+
+    return {
+      success: false,
+      message: "Error changing password",
+      strapiErrors: null,
+      zodErrors: null,
+      data: {
+        ...prevState.data,
+        ...fields,
+      },
+    };
   }
 }
 
