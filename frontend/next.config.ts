@@ -1,11 +1,8 @@
 import type { NextConfig } from "next";
 
-const isDev = process.env.NODE_ENV !== "production";
-
 const nextConfig: NextConfig = {
   cacheComponents: true,
   images: {
-    ...(isDev ? { unoptimized: true } : {}),
     remotePatterns: [
       {
         protocol: "http",

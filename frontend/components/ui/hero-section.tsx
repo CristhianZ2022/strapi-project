@@ -38,6 +38,7 @@ export function HeroSection({
         className={styles.backgroundImage}
         height={1080}
         src={imageUrl}
+        unoptimized={true}
         style={{
           aspectRatio: "1920/1080",
           objectFit: "cover",
