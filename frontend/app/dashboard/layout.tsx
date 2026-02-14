@@ -1,4 +1,4 @@
-import HeaderControl from "@/components/pages/dashboard/header-control";
+import HeaderControl from "@/components/pages/header-control";
 import { fetchUser } from "@/lib/endpoint-api";
 import type { ReactNode } from "react";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import HeaderSearch from "@/components/pages/dashboard/header-search";
+import HeaderSearch from "@/components/pages/header-search";
 
 // import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // import ClientsList from "@/components/ui/clients";
