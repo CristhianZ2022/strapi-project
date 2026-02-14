@@ -169,15 +169,12 @@ export async function changePasswordAction(
     });
 
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      const errorMessage =
-        errorData.error?.message ||
-        errorData.message ||
-        "Error al cambiar la contraseña (verifica la contraseña actual)";
+      const strapiErrorMessage = "The current password is incorrect. Please check it and try again.";
+
       return {
         success: false,
-        message: errorMessage,
-        strapiErrors: errorData,
+        message: strapiErrorMessage,
+        strapiErrors: null,
         zodErrors: null,
         data: {
           ...prevState.data,
