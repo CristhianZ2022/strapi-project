@@ -1,6 +1,18 @@
 import HeaderControl from "@/components/pages/header-control";
 import { fetchUser } from "@/lib/endpoint-api";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Panel de control para la gestión de clientes.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+import Providers from "@/components/providers/query-provider";
 
 export default async function DashboardLayout({
   children,
@@ -16,9 +28,9 @@ export default async function DashboardLayout({
   }
 
   return (
-    <>
-      <HeaderControl initialUser={user} />
-      <main>{children}</main>
-    </>
+    <Providers>
+        <HeaderControl initialUser={user} />
+        <main>{children}</main>
+    </Providers>
   );
 }
