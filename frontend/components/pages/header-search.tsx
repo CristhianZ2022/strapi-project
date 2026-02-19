@@ -1,5 +1,10 @@
+"use client";
+
 import LiOptionClient from "@/components/ui/li-option-client";
 import SearchInput from "@/components/ui/searchInput";
+import { useClientContext } from "@/contexts/client-context";
+import { Client } from "@/types/typeClients";
+import { useClients } from "@/hooks/useClients";
 import { useState } from "react";
 import {
   FaMoneyBill1Wave,
@@ -7,9 +12,87 @@ import {
   FaNfcDirectional,
   FaUser,
 } from "react-icons/fa6";
+import SearchNames from "../ui/search-names";
 
 export default function HeaderSearch() {
-  const [activeTab, setActiveTab] = useState("cliente");
+  const { activeTab, setActiveTab, setSelectedClientId } = useClientContext();
+
+  const [identifierInput, setIdentifierInput] = useState("");
+  const [nameInput, setNameInput] = useState("");
+  const [contratoInput, setContratoInput] = useState("");
+
+  const [nameResults, setNameResults] = useState<Client[]>([]);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const { data, isLoading } = useClients();
+  const clients = data?.data || [];
+
+  const handleIdentifierSearch = () => {
+    if (!identifierInput.trim()) return;
+
+    const client = clients.find(
+      (c) => c.identificacion === identifierInput.trim(),
+    );
+
+    if (client) {
+      setSelectedClientId(client.documentId);
+      setIdentifierInput("");
+      setShowError(false);
+    } else {
+      showErrorMessage("No se encontró ningún cliente con esa identificación");
+    }
+  };
+
+  const handleContratoSearch = () => {
+    if (!contratoInput.trim()) return;
+
+    const client = clients.find(
+      (c) => c.contrato.toString() === contratoInput.trim(),
+    );
+
+    if (client) {
+      setSelectedClientId(client.documentId);
+      setContratoInput("");
+      setShowError(false);
+    } else {
+      showErrorMessage("No se encontró ningún cliente con ese contrato");
+    }
+  };
+
+  const handleNameSearch = (value: string) => {
+    setNameInput(value);
+
+    if (!value.trim()) {
+      setNameResults([]);
+      return;
+    }
+
+    const filtered = clients.filter((client) => {
+      const fullName = `${client.apellidos} ${client.nombres}`.toLowerCase();
+      
+      if(client.apellidos.toLowerCase().includes(value.toLowerCase())) return fullName;
+    });
+
+    if (value.length > 2) {
+      setNameResults(filtered);
+    } else {
+      setNameResults([]);
+    }
+  };
+
+  const handleClientSelect = (client: Client) => {
+    setSelectedClientId(client.documentId);
+    setNameInput("");
+    setNameResults([]);
+    setShowError(false);
+  };
+
+  const showErrorMessage = (message: string) => {
+    setErrorMessage(message);
+    setShowError(true);
+    setTimeout(() => setShowError(false), 3000);
+  };
 
   const styles = {
     header:
@@ -18,7 +101,6 @@ export default function HeaderSearch() {
     searchRow:
       "flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-start",
     nav: "w-full border-b pt-1.5 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/80",
-
     ul: "flex items-center justify-start gap-0.5 text-xs font-medium text-gray-600 dark:text-gray-300 border-gray-200 bg-gray-200 dark:bg-gray-900/50",
     icon: "text-indigo-500 dark:text-indigo-400",
   };
@@ -32,23 +114,50 @@ export default function HeaderSearch() {
               ariaLabel="Buscar por identificación"
               type="text"
               id="identifier"
-              placeholder="RUC, Cédula o Pasaporte del cliente"
+              placeholder="RUC, Cédula o Pasaporte"
+              value={identifierInput}
+              onChange={(e) => setIdentifierInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleIdentifierSearch();
+                }
+              }}
             />
+
             <SearchInput
               ariaLabel="Buscar por nombres y apellidos"
               type="text"
-              id="nombres-apellidos"
-              placeholder="Nombres y apellidos completos del cliente"
+              id="name"
+              placeholder="Buscar por Apellidos y Nombres"
+              value={nameInput}
+              onChange={(e) => handleNameSearch(e.target.value)}
             />
+
             <SearchInput
               ariaLabel="Buscar por contrato"
               type="text"
-              id="contrato"
-              placeholder="Número de contrato del cliente"
+              id="contract"
+              placeholder="Contrato"
+              value={contratoInput}
+              onChange={(e) => setContratoInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleContratoSearch();
+                }
+              }}
             />
           </div>
+
+          <SearchNames
+            showError={showError}
+            errorMessage={errorMessage}
+            nameResults={nameResults}
+            isLoading={isLoading}
+            handleClientSelect={handleClientSelect}
+          />
         </div>
       </header>
+
       <nav className={styles.nav}>
         <ul className={styles.ul}>
           <LiOptionClient
