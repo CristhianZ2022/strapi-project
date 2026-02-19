@@ -1,11 +1,7 @@
 "use server";
 
 import { fetchStrapi } from "@/lib/api";
-import {
-  loginUserService,
-  registerUserService,
-  STRAPI_BASE_URL,
-} from "@/lib/login-register";
+import { loginUserService, registerUserService } from "@/lib/login-register";
 import {
   ChangePasswordFormSchema,
   SigninFormSchema,
@@ -223,18 +219,15 @@ export async function logoutUserAction(): Promise<void> {
 }
 
 export async function logoutGlobalUserAction(): Promise<void> {
-  const cookieStore = await cookies();
-  const jwt = cookieStore.get("jwt")?.value;
-
-  if (jwt) {
-    fetch(`${STRAPI_BASE_URL}/api/auth/logout`, {
+  try {
+    await fetchStrapi("/api/auth/logout", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-        "Content-Type": "application/json",
-      },
-    }).catch((err) => console.error("Revoke falló:", err));
+    });
+  } catch(error) {
+    console.error("Error logout global user:", error);
   }
+
+  const cookieStore = await cookies();
 
   cookieStore.set({
     name: "jwt",
