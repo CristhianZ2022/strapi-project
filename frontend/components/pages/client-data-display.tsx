@@ -2,23 +2,29 @@
 
 import { useClientContext } from "@/contexts/client-context";
 import { useClientById } from "@/hooks/useClientById";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaUser } from "react-icons/fa6";
 import { SearchI } from "@/components/icons/Icons";
 import { ClientDataRow } from "@/components/ui/client-data-row";
 import { cn } from "@/lib/utils";
+import Separator from "../ui/separator";
+import Select from "../ui/select";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 const styles = {
   container:
     "w-full bg-white dark:bg-gray-950 text-xs shadow-sm border border-indigo-100 dark:border-indigo-900/30 rounded-lg overflow-hidden",
   mainGrid: "grid grid-cols-[1fr_400px] gap-0",
-  leftColumn: "border-r border-indigo-100 dark:border-indigo-900/30",
+  leftColumn: "border-r border-indigo-300 dark:border-indigo-900/30",
   rightColumn: "bg-gray-50/50 dark:bg-gray-900/20",
 
   input:
-    "w-full bg-transparent border-none p-0 h-6 text-xs focus:ring-0 placeholder:text-gray-300 dark:placeholder:text-gray-700 text-gray-700 dark:text-gray-200",
+    "w-auto bg-transparent border-none p-0 h-6 text-xs focus:ring-0 placeholder:text-gray-300 dark:placeholder:text-gray-700 text-gray-700 dark:text-gray-200",
   select:
-    "w-full bg-transparent border-none p-0 h-6 text-xs focus:ring-0 text-gray-700 dark:text-gray-200 cursor-pointer",
+    "w-full p-0 text-xs focus:ring-0 dark:text-gray-200 cursor-pointer border-none dark:border-indigo-800 rounded px-2 py-1 h-8 bg-indigo-100/30 font-semibold text-indigo-900",
+  inputLabel:
+    "text-[10px] font-semibold text-indigo-900/60 dark:text-indigo-300/60 uppercase px-2 border-indigo-100 dark:border-indigo-900/30",
 
   searchInput:
     "w-full pl-8 pr-3 py-1.5 text-xs border border-indigo-100 dark:border-indigo-900/50 rounded bg-white dark:bg-gray-900 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all shadow-sm",
@@ -57,6 +63,8 @@ export default function ClientDataDisplay() {
     error,
   } = useClientById(selectedClientId || "");
 
+  const [selectedMedia, setSelectedMedia] = useState("FIBRA ÓPTICA");
+
   const prevClientId = useRef(selectedClientId);
 
   useEffect(() => {
@@ -85,39 +93,59 @@ export default function ClientDataDisplay() {
     );
 
   return (
-    <article className={styles.container}>
+    <article className={styles.container} key={selectedClientId}>
       <main className={styles.mainGrid}>
         <div className={styles.leftColumn}>
           <ClientDataRow label="Venta">
             <div className="flex w-full items-center">
-              <select className={styles.select} defaultValue="tradicional">
-                <option value="tradicional">Venta Tradicional</option>
-              </select>
-              <div className="w-px h-4 bg-indigo-100 dark:bg-indigo-900/30 mx-2" />
-              <p className="w-32 text-right text-indigo-600 text-sm">
+              <p className={styles.select}>Venta Tradicional</p>
+              <Separator />
+              <p className="w-32 text-center text-indigo-600 text-sm">
                 {client.contrato}
               </p>
+            </div>
+            <Separator />
+            <div className="flex w-md gap-2">
+              <Select defaultValue={client.estado}>
+                <option value="PROSPECTO">PROSPECTO</option>
+                <option value="ACTIVO" className="text-green-500">
+                  ACTIVO
+                </option>
+                <option value="CORTADO" className="text-red-500">
+                  CORTADO
+                </option>
+                <option value="SUSPENDIDO" className="text-yellow-500">
+                  SUSPENDIDO
+                </option>
+                <option value="TERMINADO" className="text-gray-500">
+                  TERMINADO
+                </option>
+              </Select>
             </div>
           </ClientDataRow>
 
           <ClientDataRow label="Identificación">
             <div className="flex gap-2 w-full items-center">
-              <select className="w-24 bg-transparent text-xs border-r border-indigo-100 dark:border-indigo-900/30 pr-2 font-medium text-indigo-700 dark:text-indigo-300">
-                <option>CEDULA</option>
-                <option>RUC</option>
-              </select>
-              <input
+              <Select className="w-auto text-xs border-r dark:border-indigo-900/30 font-medium">
+                {client.identificacion.length === 10 ? (
+                  <option>CEDULA</option>
+                ) : client.identificacion.length === 13 ? (
+                  <option>RUC</option>
+                ) : (
+                  <option>PASAPORTE</option>
+                )}
+              </Select>
+              <Input
                 type="text"
                 className={cn(styles.input, "font-mono font-medium")}
                 value={client.identificacion}
                 readOnly
               />
-              <button className={styles.plusButton}>+</button>
             </div>
           </ClientDataRow>
 
           <ClientDataRow label="Razón Social">
-            <input
+            <Input
               type="text"
               className={styles.input}
               placeholder="Nombre de empresa"
@@ -125,10 +153,11 @@ export default function ClientDataDisplay() {
           </ClientDataRow>
 
           <ClientDataRow label="Cédula Rep.Legal">
-            <input
+            <Input
               type="text"
               className={styles.input}
-              defaultValue={client.identificacion}
+              value={client.identificacion}
+              readOnly
             />
           </ClientDataRow>
 
@@ -145,29 +174,36 @@ export default function ClientDataDisplay() {
             className="uppercase font-medium"
           />
 
-          <ClientDataRow label="Telf. Conv.">
-            <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] flex-1 items-center gap-2">
-              <input
-                type="text"
-                className={cn(styles.input, "font-mono")}
-                value={"0" + client.telefono.toString()}
-                readOnly
-              />
-
-              <div className="text-[10px] font-semibold text-indigo-900/60 dark:text-indigo-300/60 uppercase px-2 border-l border-indigo-100 dark:border-indigo-900/30">
-                Celular SMS:
+          <ClientDataRow label="Contacto">
+            <section className="flex flex-1 justify-between items-center gap-2">
+              <div className="flex flex-1 items-center gap-2">
+                <Label className={styles.inputLabel}>Telf:</Label>
+                <Input
+                  type="text"
+                  className={cn(styles.input, "font-mono")}
+                  value={"0" + client.telefono.toString()}
+                  readOnly
+                />
               </div>
-              <input
-                type="text"
-                className={cn(styles.input, "font-mono")}
-                placeholder="0999999999"
-              />
 
-              <div className="text-[10px] font-semibold text-indigo-900/60 dark:text-indigo-300/60 uppercase px-2 border-l border-indigo-100 dark:border-indigo-900/30">
-                Celular(2):
+              <div className="flex flex-1 items-center gap-2">
+                <Label className={styles.inputLabel}>Celular SMS:</Label>
+                <Input
+                  type="text"
+                  className={cn(styles.input, "font-mono")}
+                  placeholder="0999999999"
+                />
               </div>
-              <input type="text" className={cn(styles.input, "font-mono")} />
-            </div>
+
+              <div className="flex flex-1 items-center gap-2">
+                <Label className={styles.inputLabel}>Celular(2):</Label>
+                <Input
+                  type="text"
+                  className={cn(styles.input, "font-mono")}
+                  placeholder="0999999999"
+                />
+              </div>
+            </section>
           </ClientDataRow>
 
           <ClientDataRow label="Email" value={client.email} readOnly />
@@ -175,7 +211,7 @@ export default function ClientDataDisplay() {
           <ClientDataRow label="Dirección Fac.">
             <input
               type="text"
-              className={`uppercase ${styles.input}`}
+              className={`uppercase w-full ${styles.input}`}
               value={`${client.ciudad} - DIRECCION REFERENCIAL`}
               readOnly
             />
@@ -202,9 +238,17 @@ export default function ClientDataDisplay() {
                   type="radio"
                   name="media"
                   className={styles.radio}
-                  disabled
+                  checked={selectedMedia === "COBRE"}
+                  onChange={() => setSelectedMedia("COBRE")}
                 />
-                <span className="text-gray-400 group-hover:text-gray-500 text-[11px]">
+                <span
+                  className={cn(
+                    "text-[11px] transition-colors",
+                    selectedMedia === "COBRE"
+                      ? "font-semibold text-indigo-600"
+                      : "text-gray-400 group-hover:text-gray-500",
+                  )}
+                >
                   COBRE
                 </span>
               </label>
@@ -213,9 +257,17 @@ export default function ClientDataDisplay() {
                   type="radio"
                   name="media"
                   className={styles.radio}
-                  disabled
+                  checked={selectedMedia === "MEDIO INALÁMBRICO"}
+                  onChange={() => setSelectedMedia("MEDIO INALÁMBRICO")}
                 />
-                <span className="text-gray-400 group-hover:text-gray-500 text-[11px]">
+                <span
+                  className={cn(
+                    "text-[11px] transition-colors",
+                    selectedMedia === "MEDIO INALÁMBRICO"
+                      ? "font-semibold text-indigo-600"
+                      : "text-gray-400 group-hover:text-gray-500",
+                  )}
+                >
                   MEDIO INALÁMBRICO
                 </span>
               </label>
@@ -224,9 +276,17 @@ export default function ClientDataDisplay() {
                   type="radio"
                   name="media"
                   className={styles.radio}
-                  defaultChecked
+                  checked={selectedMedia === "FIBRA ÓPTICA"}
+                  onChange={() => setSelectedMedia("FIBRA ÓPTICA")}
                 />
-                <span className="font-semibold text-indigo-600 text-[11px]">
+                <span
+                  className={cn(
+                    "text-[11px] transition-colors",
+                    selectedMedia === "FIBRA ÓPTICA"
+                      ? "font-semibold text-indigo-600"
+                      : "text-gray-400 group-hover:text-gray-500",
+                  )}
+                >
                   FIBRA ÓPTICA
                 </span>
               </label>
@@ -385,30 +445,6 @@ export default function ClientDataDisplay() {
         <div className={styles.rightColumn}>
           {/* Status Header */}
           <div className="p-4 border-b border-indigo-100 dark:border-indigo-900/30 bg-white dark:bg-gray-950">
-            <div className="flex gap-2 mb-3">
-              <select
-                defaultValue={client.estado}
-                className={cn(
-                  styles.select,
-                  "border border-indigo-200 dark:border-indigo-800 rounded px-2 py-1 h-8 bg-indigo-50/30 font-semibold text-indigo-900",
-                )}
-              >
-                <option value="PROSPECTO">PROSPECTO</option>
-                <option value="ACTIVO" className="text-green-500">
-                  ACTIVO
-                </option>
-                <option value="CORTADO" className="text-red-500">
-                  CORTADO
-                </option>
-                <option value="SUSPENDIDO" className="text-yellow-500">
-                  SUSPENDIDO
-                </option>
-                <option value="TERMINADO" className="text-gray-500">
-                  TERMINADO
-                </option>
-              </select>
-            </div>
-
             <div className="flex items-center gap-3 py-1 px-1">
               <div className={`${styles.toggle} ${styles.toggleOff} scale-90`}>
                 <span
