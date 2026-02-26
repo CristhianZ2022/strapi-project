@@ -25,8 +25,6 @@ import {
 import { Input } from "../ui/input";
 import { styles } from "@/app/styles/styles";
 
-
-
 export default function RenderClient() {
   const { selectedClientId, setActiveTab } = useClientContext();
   const {
@@ -82,7 +80,7 @@ export default function RenderClient() {
   return (
     <article className={styles.container} key={selectedClientId}>
       <main className={styles.mainGrid}>
-        <section className={styles.leftColumn}>
+        <section className={cn(styles.leftColumn, "w-3/4")}>
           <ClientDataRow label="Venta">
             <div className="flex w-full items-center">
               <p className={styles.select}>Venta Tradicional</p>
@@ -314,7 +312,7 @@ export default function RenderClient() {
           </ClientDataRow>
         </section>
 
-        <section className={styles.rightColumn}>
+        <section className={cn(styles.rightColumn, "w-1/4")}>
           <div className="p-4 border-b border-indigo-100 dark:border-indigo-900/30 bg-white dark:bg-gray-950">
             <DataToggle
               label="¿Es agente de retención?"

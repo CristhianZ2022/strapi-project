@@ -18,7 +18,7 @@ export default function SearchNames({
   handleClientSelect,
 }: SearchNamesProps) {
   return (
-    <div className="absolute left-72 w-82 top-15">
+    <div className="absolute left-72 w-82 z-100 top-15">
       {showError && (
         <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-center animate-in fade-in">
           <p className="text-sm text-red-800 dark:text-red-200">

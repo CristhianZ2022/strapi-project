@@ -3,6 +3,10 @@ import { useClientById } from "@/hooks/useClientById";
 import { UserI } from "../icons/Icons";
 import { styles } from "@/app/styles/styles";
 import { ClientDataRow } from "../ui/client-data-row";
+import { cn } from "@/lib/utils";
+import { Input } from "../ui/input";
+import Select from "../ui/select";
+import StarRating from "../ui/stars";
 
 export default function RenderAddress() {
   const { selectedClientId } = useClientContext();
@@ -33,9 +37,62 @@ export default function RenderAddress() {
   return (
     <article className={styles.container} key={selectedClientId}>
       <main className={styles.mainGrid}>
-        <section className={styles.leftColumn}>
+        <section className={cn(styles.leftColumn, "w-2/4")}>
           <ClientDataRow label="Fecha de instalación">
             <p className={styles.select}>11-01-2026</p>
+          </ClientDataRow>
+          <ClientDataRow label="Fecha de Traslado">
+            <p className={styles.select}>12-01-2026</p>
+          </ClientDataRow>
+          <ClientDataRow label="Cliente desde">
+            <p className={styles.select}># años | # meses | # dias</p>
+          </ClientDataRow>
+          <ClientDataRow label="Cantón">
+            <p className={styles.select}>{client.ciudad}</p>
+          </ClientDataRow>
+          <ClientDataRow label="Dirección de instalación">
+            <Input
+              type="text"
+              className={styles.input}
+              value={client.ciudad}
+              readOnly
+            />
+          </ClientDataRow>
+          <ClientDataRow label="Dirección de Trabajo">
+            <Input
+              type="text"
+              className={styles.input}
+              value={client.ciudad}
+              readOnly
+            />
+          </ClientDataRow>
+          <ClientDataRow label="La vivienda es_">
+            <Select defaultValue={client.estado}>
+              <option value="Propia">PROPIA</option>
+              <option value="Alquilada">ALQUILADA</option>
+              <option value="Familiar">FAMILIAR</option>
+            </Select>
+          </ClientDataRow>
+          <ClientDataRow label="Referencia de la ubicación">
+            <textarea
+              className="min-h-10 w-full max-h-24 p-2 text-xs focus:ring-0 dark:text-gray-200 border-none"
+              value={client.ciudad}
+              readOnly
+            />
+          </ClientDataRow>
+          <ClientDataRow label="Calificación Crediticia">
+            <p className={styles.select}>0</p>
+            <span>
+              <StarRating score={500} />
+            </span>
+          </ClientDataRow>
+        </section>
+        <section className={cn(styles.rightColumn, "w-2/4")}>
+          <ClientDataRow label="Fecha de creación">
+            <p className={styles.select}>10-01-2026</p>
+          </ClientDataRow>
+          <ClientDataRow label="Fecha de Terminado">
+            <p className={styles.select}>00-00-0000</p>
           </ClientDataRow>
         </section>
       </main>

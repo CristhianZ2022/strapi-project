@@ -1,12 +1,12 @@
 export const styles = {
   container:
     "w-full bg-white dark:bg-gray-950 text-xs shadow-sm border border-indigo-100 dark:border-indigo-900/30 rounded-lg overflow-hidden",
-  mainGrid: "grid grid-cols-[1fr_550px] gap-0",
+  mainGrid: "w-full flex gap-0",
   leftColumn: "border-r border-indigo-300 dark:border-indigo-900/30",
   rightColumn: "bg-gray-50/50 dark:bg-gray-900/20",
 
   input:
-    "w-auto bg-transparent border-none p-0 h-6 text-xs focus:ring-0 placeholder:text-gray-300 dark:placeholder:text-gray-700 text-gray-700 dark:text-gray-200",
+    "w-auto bg-transparent border-none px-2 h-6 text-xs focus:ring-0 placeholder:text-gray-300 dark:placeholder:text-gray-700 text-gray-700 dark:text-gray-200",
   select:
     "w-full p-0 text-xs focus:ring-0 dark:text-gray-200 cursor-pointer border-none dark:border-indigo-800 rounded px-2 py-2 h-8 bg-indigo-100/30 font-semibold text-indigo-900",
   inputLabel:
