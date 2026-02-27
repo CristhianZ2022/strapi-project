@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 import Select from "../ui/select";
 import StarRating from "../ui/stars";
+import { CompactTable, Headers } from "../ui/compact-table";
+import { Rows } from "lucide-react";
 
 export default function RenderAddress() {
   const { selectedClientId } = useClientContext();
@@ -85,6 +87,18 @@ export default function RenderAddress() {
             <span>
               <StarRating score={500} />
             </span>
+          </ClientDataRow>
+          <ClientDataRow label="Referencias">
+            <CompactTable >
+              <Headers headers={["Cédula", "Nombre", "Teléfono", "Dirección"]} />
+              <Rows
+                rows={[
+                  {
+                    
+                  }
+                ]}
+              />
+            </CompactTable>
           </ClientDataRow>
         </section>
         <section className={cn(styles.rightColumn, "w-2/4")}>
