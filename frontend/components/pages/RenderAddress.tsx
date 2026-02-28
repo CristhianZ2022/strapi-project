@@ -104,6 +104,7 @@ export default function RenderAddress() {
               type="text"
               className={styles.input}
               value={""}
+              readOnly
             />
           </ClientDataRow>
           <ClientDataRow label="Vendido por:">
@@ -111,6 +112,7 @@ export default function RenderAddress() {
               type="text"
               className={styles.input}
               value={""}
+              readOnly
             />
           </ClientDataRow>
           <ClientDataRow label="Instalador Asignado">
@@ -118,6 +120,7 @@ export default function RenderAddress() {
               type="text"
               className={styles.input}
               value={""}
+              readOnly
             />
           </ClientDataRow>
         </section>
