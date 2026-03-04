@@ -6,9 +6,10 @@ import { useState, type ReactNode } from "react";
 
 export default function Providers({ children }: { children: ReactNode }) {
   const [clientById] = useState(() => new QueryClient());
+  const [user] = useState(() => new QueryClient());
 
   return (
-    <QueryClientProvider client={clientById}>
+    <QueryClientProvider client={clientById} context={user}>
       <ClientProvider>{children}</ClientProvider>
     </QueryClientProvider>
   );

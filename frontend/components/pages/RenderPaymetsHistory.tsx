@@ -8,14 +8,27 @@ import {
   PaymentRowData,
 } from "../ui/compact-table";
 import { Label } from "../ui/label";
+import { useUser } from "@/hooks/useUser";
 
-export default function RenderPaymentsOuts() {
+export default function RenderPaymentsHistory() {
   const { selectedClientId, setActiveTab } = useClientContext();
+  const { data: user } = useUser();
   const {
     data: client,
     isLoading,
     error,
   } = useClientById(selectedClientId || "");
+
+  const firstChar = user?.fullname
+    ?.split(" ")[0]
+    .split("")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
+
+  const lastname = user?.lastname?.split(" ")[0]?.toUpperCase();
+
+  const usuario = firstChar?.concat(lastname || "");
 
   if (!selectedClientId) {
     setActiveTab("cliente");
@@ -30,7 +43,6 @@ export default function RenderPaymentsOuts() {
       </div>
     );
 
-  // TODO: conecta aquí el hook/endpoint real de pagos del cliente (ej. usePaymentsByClient(selectedClientId))
   const rows: PaymentRowData[] = [];
 
   return (
@@ -40,22 +52,20 @@ export default function RenderPaymentsOuts() {
           <Headers
             headers={[
               "No.",
-              "Obligación",
+              "Emision",
               "Total",
-              "Pagado",
-              "Saldo",
-              "Ref",
-              "No. Factura",
-              "Emitida",
+              "Fecha de Pago",
+              "Valor",
+              "Forma de Pago",
+              "Fecha de Deposito",
+              "Documento",
               "Dsctos",
-              "Detalle",
+              `Usuario`,
               "Acción",
             ]}
           />
           <Label className="p-2 bg-indigo-50/20 dark:bg-indigo-900/10 border-b border-indigo-100 dark:border-indigo-900/30">
-            Contrato No.: {client.contrato} -{" "}
-            {"PLAN RESIDENCIAL ONE CONNECTION 600 MBPS / CORTE 15"}- ESTADO{" "}
-            {client.estado}
+            Contrato No.: {client.contrato}
           </Label>
           {rows.length > 0 ? (
             rows.map((row) => (
@@ -67,7 +77,7 @@ export default function RenderPaymentsOuts() {
             ))
           ) : (
             <div className="p-10 text-center text-gray-400 italic text-sm">
-              No hay pagos pendientes.
+              No hay pagos realizados.
             </div>
           )}
         </CompactTable>
@@ -75,5 +85,3 @@ export default function RenderPaymentsOuts() {
     </article>
   );
 }
-
-// REALIZAR LA SECCIÓN DE PAGOS, DEBE CONTENER UN FORMULARIO PARA REGISTRAR PAGOS, UN BOTÓN PARA AGREGAR UN PAGO Y UNA TABLA PARA MOSTRAR LOS PAGOS PENDIENTES.

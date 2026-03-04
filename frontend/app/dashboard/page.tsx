@@ -4,6 +4,7 @@ import HeaderSearch from "@/components/pages/header-search";
 import RenderAddress from "@/components/pages/RenderAddress";
 import ClientDataDisplay from "@/components/pages/RenderClient";
 import RenderPaymentsOuts from "@/components/pages/RenderPaymentsOuts";
+import RenderPaymentsHistory from "@/components/pages/RenderPaymetsHistory";
 import { useClientContext } from "@/contexts/client-context";
 import { useEffect, useRef } from "react";
 
@@ -25,6 +26,7 @@ export default function DashboardRoute() {
         {activeTab === "cliente" && <ClientDataDisplay />}
         {activeTab === "direccion" && <RenderAddress />}
         {activeTab === "pagosPendientes" && <RenderPaymentsOuts />}
+        {activeTab === "pagosRealizados" && <RenderPaymentsHistory />}
       </>
     </>
   );

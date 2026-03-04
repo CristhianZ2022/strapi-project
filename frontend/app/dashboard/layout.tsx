@@ -1,5 +1,4 @@
 import HeaderControl from "@/components/pages/header-control";
-import { fetchUser } from "@/lib/endpoint-api";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
@@ -19,18 +18,13 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-  let user = null;
-
-  try {
-    user = await fetchUser();
-  } catch (err) {
-    console.error("Error fetching user in dashboard layout:", err);
-  }
 
   return (
     <Providers>
-        <HeaderControl initialUser={user} />
-        <main>{children}</main>
+      <div className="flex flex-col min-h-screen">
+        <HeaderControl />
+        <main className="flex-1 flex flex-col">{children}</main>
+      </div>
     </Providers>
   );
 }

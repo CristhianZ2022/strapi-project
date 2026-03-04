@@ -220,11 +220,7 @@ export default function RenderClient() {
 
           <ClientDataRow label="Planes Mensuales">
             <CompactTable>
-              <section
-                className={cn(
-                  "w-full flex bg-indigo-50/20 dark:bg-indigo-900/10 border-b border-indigo-100 dark:border-indigo-900/30",
-                )}
-              >
+              <section className="w-full flex items-stretch">
                 <TableSearchHeader
                   ariaLabel="Planes Disponibles"
                   type="text"
@@ -312,7 +308,7 @@ export default function RenderClient() {
           </ClientDataRow>
         </section>
 
-        <section className={cn(styles.rightColumn, "w-1/4")}>
+        <section className={cn(styles.rightColumn, "w-1/4 flex flex-col")}>
           <div className="p-4 border-b border-indigo-100 dark:border-indigo-900/30 bg-white dark:bg-gray-950">
             <DataToggle
               label="¿Es agente de retención?"
@@ -321,7 +317,7 @@ export default function RenderClient() {
               rowClassName="border-none bg-transparent hover:bg-transparent min-h-0 p-0"
             />
           </div>
-          <div className="p-4 flex flex-col gap-3 h-[calc(100%-250px)]">
+          <div className="p-4 flex flex-col gap-3">
             <div className="flex flex-col gap-2">
               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                 Subir Archivos

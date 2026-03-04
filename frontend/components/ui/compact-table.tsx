@@ -9,6 +9,20 @@ interface CompactTableProps {
   className?: string;
 }
 
+export interface PaymentRowData {
+  no: number | string;
+  obligacion: string;
+  total: number;
+  pagado: number;
+  saldo: number;
+  ref: string;
+  noFactura: string;
+  emitida: string;
+  dsctos: number;
+  detalle?: string;
+  id?: string | number;
+}
+
 interface TableSearchHeaderProps {
   ariaLabel: string;
   type: string;
@@ -19,12 +33,12 @@ interface TableSearchHeaderProps {
 
 interface ServicioRow {
   title: string;
-  corte?: number | string;          
+  corte?: number | string;
   valor: number;
   esPrincipal: boolean;
   descuento: number;
   meses: number;
-  id?: string | number;  
+  id?: string | number;
 }
 
 interface TwoColumnStatsProps {
@@ -44,9 +58,7 @@ export const CompactTable: React.FC<CompactTableProps> = ({
   className,
 }) => {
   return (
-    <div className={cn("flex flex-col w-full", className)}>
-      {children}
-    </div>
+    <div className={cn("flex flex-col w-full", className)}>{children}</div>
   );
 };
 
@@ -58,7 +70,7 @@ export function TableSearchHeader({
   children,
 }: TableSearchHeaderProps) {
   return (
-    <div className="w-1/2 flex items-center">
+    <div className="w-1/2 flex items-center bg-indigo-50/20 dark:bg-indigo-900/10 border-b border-indigo-100 dark:border-indigo-900/30">
       <div className="flex gap-1 p-1 w-full items-center">
         <SearchInput
           ariaLabel={ariaLabel}
@@ -77,7 +89,7 @@ export function TableSearchHeader({
 
 export function Headers({ headers }: { headers: React.ReactNode[] }) {
   return (
-    <div className="w-full flex items-center">
+    <div className="flex-1 py-1 flex items-center bg-indigo-50/20 dark:bg-indigo-900/10 border-b border-indigo-100 dark:border-indigo-900/30">
       {headers.map((header, index) => (
         <div
           key={index}
@@ -92,7 +104,6 @@ export function Headers({ headers }: { headers: React.ReactNode[] }) {
     </div>
   );
 }
-
 
 export function RowsStats({
   rows,
@@ -159,6 +170,66 @@ export function RowsStats({
           No hay servicios agregados
         </div>
       )}
+    </div>
+  );
+}
+
+export function PaymentRow({
+  row,
+  onAction,
+}: {
+  row: PaymentRowData;
+  onAction?: (id: string | number) => void;
+}) {
+  return (
+    <div className="flex w-full items-center hover:bg-indigo-50/10 transition-colors border-b border-indigo-50 dark:border-indigo-900/20">
+      {/* No. */}
+      <div className="flex-1 text-center text-xs font-mono py-2">{row.no}</div>
+      {/* Obligación */}
+      <div className="flex-1 text-center text-xs font-medium text-indigo-900 dark:text-indigo-200 py-2 truncate px-1">
+        {row.obligacion}
+      </div>
+      {/* Total */}
+      <div className="flex-1 text-center text-xs font-mono py-2">
+        {row.total.toFixed(2)}
+      </div>
+      {/* Pagado */}
+      <div className="flex-1 text-center text-xs font-mono py-2 text-green-600 dark:text-green-400">
+        {row.pagado.toFixed(2)}
+      </div>
+      {/* Saldo */}
+      <div className="flex-1 text-center text-xs font-mono py-2 text-red-500 dark:text-red-400">
+        {row.saldo.toFixed(2)}
+      </div>
+      {/* Ref */}
+      <div className="flex-1 text-center text-xs text-gray-500 py-2 truncate px-1">
+        {row.ref}
+      </div>
+      {/* No. Factura */}
+      <div className="flex-1 text-center text-xs text-gray-500 py-2 truncate px-1">
+        {row.noFactura}
+      </div>
+      {/* Emitida */}
+      <div className="flex-1 text-center text-xs text-gray-500 py-2">
+        {row.emitida}
+      </div>
+      {/* Dsctos */}
+      <div className="flex-1 text-center text-xs font-mono text-gray-500 py-2">
+        {row.dsctos.toFixed(2)}
+      </div>
+      {/* Detalle */}
+      <div className="flex-1 text-center text-xs text-gray-400 py-2 truncate px-1">
+        {row.detalle ?? "-"}
+      </div>
+      {/* Acción */}
+      <div className="w-[120px] flex-none flex justify-center py-2 px-1">
+        <button
+          onClick={() => onAction?.(row.id ?? row.no)}
+          className="px-2.5 py-1 text-xs text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 rounded transition-colors"
+        >
+          Ver
+        </button>
+      </div>
     </div>
   );
 }

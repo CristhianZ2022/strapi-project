@@ -18,14 +18,11 @@ import { Ul } from "@/components/ui/ul";
 
 import { useState } from "react";
 import ChangePass from "@/components/ui/change-pass";
-
-interface HeaderControlProps {
-  initialUser: { fullname: string; lastname: string } | null;
-}
+import { useUser } from "@/hooks/useUser";
 
 const styles = {
   header:
-    "flex w-full bg-gray-100 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 gap-5 px-3 py-0.5 sticky top-0 z-20 shadow-sm",
+    "flex w-full bg-gray-100 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 gap-5 px-3 py-0.5 sticky top-0 z-3000 shadow-sm",
   section: "max-w-auto flex items-center justify-start h-8 gap-4",
   a: "flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded",
   logo: "w-5 h-5 bg-indigo-600 rounded flex items-center justify-center text-white text-[10px] font-bold shrink-0",
@@ -34,13 +31,14 @@ const styles = {
   caret: "text-indigo-400 text-xs transition-all duration-300 w-3 h-4",
 };
 
-export default function HeaderControl({ initialUser }: HeaderControlProps) {
+export default function HeaderControl() {
   const [active, setActive] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const { data: user } = useUser();
 
-  const nameAndLastname = initialUser?.fullname
+  const nameAndLastname = user?.fullname
     ?.split(" ")[0]
-    .concat(" ", initialUser?.lastname?.split(" ")[0])
+    .concat(" ", user?.lastname?.split(" ")[0])
     ?.toUpperCase();
 
   const data = nameAndLastname
