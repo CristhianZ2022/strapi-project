@@ -71,16 +71,16 @@ export default function HeaderControl() {
       >
         <Ul className={styles.ul}>
           <LiControlHeader
+            id="control"
+            text="Control"
             setActive={setActive}
+            isActive={active === "control"}
             icon={<CircleI className={styles.icon} />}
             caret={
               <ArrowRigthI
                 className={` ${styles.caret} ${active === "control" ? "rotate-90" : "rotate-0"}`}
               />
             }
-            id="control"
-            text="Control"
-            isActive={active === "control"}
             onClick={(e) => {
               e.stopPropagation();
               setActive((prev) => (prev === "control" ? "" : "control"));

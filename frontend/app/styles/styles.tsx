@@ -39,4 +39,6 @@ export const styles = {
     "inline-block h-3 w-3 transform rounded-full bg-white transition transition-transform shadow-sm",
   toggleThumbOn: "translate-x-4",
   toggleThumbOff: "translate-x-1",
+  icon: "text-indigo-400 text-xs w-[14px] h-[14px]",
+  caret: "text-indigo-400 text-xs transition-all duration-300 w-3 h-4",
 };

@@ -1,16 +1,16 @@
 import { useClientContext } from "@/contexts/client-context";
 import { useClientById } from "@/hooks/useClientById";
 import { styles } from "@/app/styles/styles";
-import {
-  CompactTable,
-  Headers,
-  PaymentRow,
-  PaymentRowData,
-} from "../ui/compact-table";
+import { CompactTable, Headers, PaymentRow } from "../ui/compact-table";
 import { Label } from "../ui/label";
 import { useUser } from "@/hooks/useUser";
+import LiControlHeader from "../ui/li-control-header";
+import { useState } from "react";
+import { ArrowRigthI, CircleI, DeleteI, DetailsI, DocumentI, PrintI, XMLI } from "../icons/Icons";
+import { Li } from "../ui/li";
 
 export default function RenderPaymentsHistory() {
+  const [active, setActive] = useState("");
   const { selectedClientId, setActiveTab } = useClientContext();
   const { data: user } = useUser();
   const {
@@ -43,12 +43,13 @@ export default function RenderPaymentsHistory() {
       </div>
     );
 
-  const rows: PaymentRowData[] = [];
-
   return (
     <article className={styles.container} key={selectedClientId}>
       <main className={styles.mainGrid}>
-        <CompactTable>
+        <CompactTable
+          className="min-w-[1200px]"
+          gridCols="repeat(10, minmax(max-content, 1fr)) 120px"
+        >
           <Headers
             headers={[
               "No.",
@@ -64,22 +65,64 @@ export default function RenderPaymentsHistory() {
               "Acción",
             ]}
           />
-          <Label className="p-2 bg-indigo-50/20 dark:bg-indigo-900/10 border-b border-indigo-100 dark:border-indigo-900/30">
+          <Label className="col-span-full p-2 bg-indigo-50/20 dark:bg-indigo-900/10 border-b border-indigo-100 dark:border-indigo-900/30">
             Contrato No.: {client.contrato}
           </Label>
-          {rows.length > 0 ? (
-            rows.map((row) => (
-              <PaymentRow
-                key={row.id ?? row.no}
-                row={row}
-                onAction={(id) => console.log("Acción:", id)}
-              />
-            ))
-          ) : (
-            <div className="p-10 text-center text-gray-400 italic text-sm">
-              No hay pagos realizados.
-            </div>
-          )}
+          <PaymentRow
+            cells={[
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              usuario,
+              <div key="options">
+                <LiControlHeader
+                  id="opciones"
+                  text="Opciones"
+                  setActive={setActive}
+                  isActive={active === "opciones"}
+                  icon={<CircleI className={styles.icon} />}
+                  caret={
+                    <ArrowRigthI
+                      className={` ${styles.caret} ${active === "opciones" ? "rotate-90" : "rotate-0"}`}
+                    />
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActive((prev) =>
+                      prev === "opciones" ? "" : "opciones",
+                    );
+                  }}
+                >
+                  <Li>
+                    <DeleteI className={styles.icon} />
+                    <span>Eliminar</span>
+                  </Li>
+                  <Li>
+                    <DetailsI className={styles.icon} />
+                    <span>Detalles</span>
+                  </Li>
+                  <Li>
+                    <PrintI className={styles.icon} />
+                    <span>Imprimir</span>
+                  </Li>
+                  <Li>
+                    <DocumentI className={styles.icon} />
+                    <span>Descargar RIDE</span>
+                  </Li>
+                  <Li>
+                    <XMLI className={styles.icon} />
+                    <span>Descargar XML</span>
+                  </Li>
+                </LiControlHeader>
+              </div>,
+            ]}
+          />
         </CompactTable>
       </main>
     </article>

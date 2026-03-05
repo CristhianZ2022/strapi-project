@@ -14,7 +14,7 @@ import {
   TableSearchHeader,
   CompactTable,
   Headers,
-  RowsStats,
+  PaymentRow,
 } from "../ui/compact-table";
 import {
   DataInput,
@@ -219,30 +219,44 @@ export default function RenderClient() {
           />
 
           <ClientDataRow label="Planes Mensuales">
-            <CompactTable>
-              <section className="w-full flex items-stretch">
+            <CompactTable gridCols="minmax(max-content, 2fr) repeat(4, minmax(max-content, 1fr)) 120px">
+              <div className="grid grid-cols-subgrid col-span-full">
                 <TableSearchHeader
                   ariaLabel="Planes Disponibles"
                   type="text"
                   id="planes"
                   placeholder="Busque aquí el plan"
+                  className="col-span-1"
                 >
                   + Añadir (Principal)
                 </TableSearchHeader>
-                <Headers
+                <div className="grid grid-cols-subgrid col-span-5">
+                  <Headers
                   headers={["Valor", "Principal", "$Dscto.", "Meses", "Opción"]}
-                />
-              </section>
-              <RowsStats
-                rows={[
-                  {
-                    title: "RESIDENCIAL ONE SOCIAL (200 MBPS)",
-                    corte: 25,
-                    valor: 20.54,
-                    esPrincipal: true,
-                    descuento: 0.0,
-                    meses: -1,
-                  },
+                  />
+                </div>
+              </div>
+
+              <PaymentRow
+                cells={[
+                  "RESIDENCIAL ONE SOCIAL (200 MBPS) - corte 25",
+                  "20.54",
+                  <DataToggle
+                    key="principal"
+                    label=""
+                    isOn={toggles.principal}
+                    onToggle={() => handleToggle("principal")}
+                  />,
+                  ".00",
+                  "0",
+                  <div key="actions" className="flex justify-center gap-2">
+                    <Button className="px-1.5 py-0.5 text-xs bg-white text-red-600 hover:bg-red-50 border border-red-200 rounded">
+                      Elim.
+                    </Button>
+                    <Button className="px-1.5 py-0.5 text-xs bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-200 rounded">
+                      $ Desc.
+                    </Button>
+                  </div>,
                 ]}
               />
             </CompactTable>
