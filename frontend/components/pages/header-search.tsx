@@ -24,8 +24,9 @@ export default function HeaderSearch() {
   const [nameResults, setNameResults] = useState<Client[]>([]);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isFetchEnabled, setIsFetchEnabled] = useState(false);
 
-  const { data, isLoading } = useClients();
+  const { data, isLoading } = useClients(isFetchEnabled);
   const clients = data?.data || [];
 
   const handleIdentifierSearch = () => {
@@ -62,6 +63,7 @@ export default function HeaderSearch() {
 
   const handleNameSearch = (value: string) => {
     setNameInput(value);
+    if (!isFetchEnabled) setIsFetchEnabled(true);
 
     if (!value.trim()) {
       setNameResults([]);
@@ -70,8 +72,7 @@ export default function HeaderSearch() {
 
     const filtered = clients.filter((client) => {
       const fullName = `${client.apellidos} ${client.nombres}`.toLowerCase();
-      
-      if(client.apellidos.toLowerCase().includes(value.toLowerCase())) return fullName;
+      return fullName.includes(value.toLowerCase());
     });
 
     if (value.length > 2) {
@@ -117,6 +118,7 @@ export default function HeaderSearch() {
               placeholder="RUC, Cédula o Pasaporte"
               value={identifierInput}
               onChange={(e) => setIdentifierInput(e.target.value)}
+              onFocus={() => setIsFetchEnabled(true)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleIdentifierSearch();
@@ -131,6 +133,7 @@ export default function HeaderSearch() {
               placeholder="Buscar por Apellidos y Nombres"
               value={nameInput}
               onChange={(e) => handleNameSearch(e.target.value)}
+              onFocus={() => setIsFetchEnabled(true)}
             />
 
             <SearchInput
@@ -140,6 +143,7 @@ export default function HeaderSearch() {
               placeholder="Contrato"
               value={contratoInput}
               onChange={(e) => setContratoInput(e.target.value)}
+              onFocus={() => setIsFetchEnabled(true)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleContratoSearch();
