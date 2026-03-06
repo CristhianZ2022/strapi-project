@@ -2,7 +2,7 @@
 
 import { useClientContext } from "@/contexts/client-context";
 import { useClientById } from "@/hooks/useClientById";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { SearchI, UserI } from "@/components/icons/Icons";
 import { ClientDataRow } from "@/components/ui/client-data-row";
 import { cn } from "@/lib/utils";
@@ -24,9 +24,12 @@ import {
 } from "../ui/client-data-fields";
 import { Input } from "../ui/input";
 import { styles } from "@/app/styles/styles";
+import { usePlans } from "@/hooks/usePlans";
+import { Plan } from "@/types/typeClients";
+import { SearchPlans } from "../ui/searchParams";
 
 export default function RenderClient() {
-  const { selectedClientId, setActiveTab } = useClientContext();
+  const { selectedClientId } = useClientContext();
   const {
     data: client,
     isLoading,
@@ -42,8 +45,43 @@ export default function RenderClient() {
     principal: false,
   });
 
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [selectedMedia, setSelectedMedia] = useState("FIBRA ÓPTICA");
-  const prevClientId = useRef(selectedClientId);
+  const [searchPlan, setSearchPlan] = useState("");
+  const [plansResults, setPlansResults] = useState<Plan[]>([]);
+  const [isFetchEnabled, setIsFetchEnabled] = useState(false);
+
+  const { data: plans } = usePlans(isFetchEnabled);
+  const plansData = plans?.data || [];
+
+  const handlePlansSearch = (value: string) => {
+    setSearchPlan(value);
+    if (!isFetchEnabled) setIsFetchEnabled(true);
+
+    if (!value.trim()) {
+      setIsFetchEnabled(false);
+      setPlansResults([]);
+      return;
+    }
+
+    const filtered = plansData.filter((plan) => {
+      const media = `${plan.type}`.toLowerCase();
+      const search = searchPlan.toLowerCase();
+
+      if (media.includes(selectedMedia.toLowerCase())) {
+        return plan.plan.toLowerCase().includes(search);
+      }
+    });
+    
+    setPlansResults(filtered);
+  };
+
+  const handleSelectPlan = (plan: Plan) => {
+    setSelectedPlan(plan.documentId);
+    setSearchPlan("");
+    setPlansResults([]);
+    setIsFetchEnabled(false);
+  };
 
   const handleToggle = (key: keyof typeof toggles) => {
     setToggles((prev) => ({
@@ -51,13 +89,6 @@ export default function RenderClient() {
       [key]: !prev[key],
     }));
   };
-
-  useEffect(() => {
-    if (selectedClientId !== prevClientId.current) {
-      prevClientId.current = selectedClientId;
-      setActiveTab("cliente");
-    }
-  }, [selectedClientId, setActiveTab]);
 
   if (!selectedClientId) {
     return (
@@ -226,13 +257,26 @@ export default function RenderClient() {
                   type="text"
                   id="planes"
                   placeholder="Busque aquí el plan"
+                  value={searchPlan}
+                  onChange={(e) => handlePlansSearch(e.target.value)}
+                  onFocus={() => setIsFetchEnabled(true)}
                   className="col-span-1"
                 >
+                  <SearchPlans
+                    plansResults={plansResults}
+                    handleSelectPlan={handleSelectPlan}
+                  />
                   + Añadir (Principal)
                 </TableSearchHeader>
                 <div className="grid grid-cols-subgrid col-span-5">
                   <Headers
-                  headers={["Valor", "Principal", "$Dscto.", "Meses", "Opción"]}
+                    headers={[
+                      "Valor",
+                      "Principal",
+                      "$Dscto.",
+                      "Meses",
+                      "Opción",
+                    ]}
                   />
                 </div>
               </div>
@@ -345,7 +389,7 @@ export default function RenderClient() {
             </div>
 
             <div className="border border-indigo-100 dark:border-indigo-900/30 rounded-lg bg-white dark:bg-gray-950 flex-1 overflow-hidden shadow-sm flex flex-col">
-              <table className="w-full text-left">
+              <table className="min-h-80 w-full text-left">
                 <thead className="sticky top-0 bg-indigo-50/50 dark:bg-indigo-900/20 z-10">
                   <tr>
                     <th className={styles.tableHeader}>Archivo</th>

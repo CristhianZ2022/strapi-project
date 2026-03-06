@@ -12,7 +12,7 @@ import {
   FaNfcDirectional,
   FaUser,
 } from "react-icons/fa6";
-import SearchNames from "../ui/search-names";
+import SearchNames from "../ui/searchParams";
 
 export default function HeaderSearch() {
   const { activeTab, setActiveTab, setSelectedClientId } = useClientContext();

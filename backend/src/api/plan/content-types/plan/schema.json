@@ -13,7 +13,6 @@
   "attributes": {
     "type": {
       "type": "string",
-      "private": true,
       "required": true
     },
     "plan": {

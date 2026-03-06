@@ -27,6 +27,9 @@ interface TableSearchHeaderProps {
   type: string;
   id: string;
   placeholder: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onFocus?: () => void;
   children?: React.ReactNode;
 }
 
@@ -61,6 +64,9 @@ export function TableSearchHeader({
   type,
   id,
   placeholder,
+  value,
+  onChange,
+  onFocus,
   children,
   className,
 }: TableSearchHeaderProps & { className?: string }) {
@@ -77,6 +83,9 @@ export function TableSearchHeader({
           type={type}
           id={id}
           placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          onFocus={onFocus}
           className="flex-1"
         />
         <Button className={cn(styles.actionButton, "shrink-0")}>
