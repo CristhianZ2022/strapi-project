@@ -15,3 +15,13 @@ export interface User {
   fullname: string;
   lastname: string;
 }
+
+export interface Plan {
+  documentId: string;
+  type: string;
+  plan: string;
+  cut: number;
+  valor: number;
+  descuento: number;
+  meses: number;
+}

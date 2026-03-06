@@ -1,6 +1,6 @@
 "use server";
 
-import { Client, User } from "@/types/typeClients";
+import { Client, User, Plan } from "@/types/typeClients";
 import { strapiJson } from "./api";
 
 export async function fetchClients(): Promise<{ data: Client[] }> {
@@ -41,5 +41,19 @@ export async function fetchUser() {
   } catch (error) {
     console.error("Error fetching user data:", error);
     return { fullname: "", lastname: "" };
+  }
+}
+
+export async function fetchPlans() {
+  try {
+    const response = await strapiJson<{
+      data: Plan[];
+      meta: Record<string, unknown>;
+    }>("/api/plans");
+
+    return { data: response.data };
+  } catch (error) {
+    console.error("Error fetching plans:", error);
+    return { data: [] };
   }
 }
