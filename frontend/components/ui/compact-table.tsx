@@ -121,7 +121,7 @@ export function PaymentRow({ cells }: { cells: React.ReactNode[] }) {
         <div
           key={index}
           className={cn(
-            "flex items-center justify-center text-center text-xs py-2 border-r border-indigo-100 dark:border-indigo-900/30",
+            "flex items-center justify-center text-center text-xs border-r border-indigo-100 dark:border-indigo-900/30",
             index === cells.length - 1 && "border-r-0",
           )}
         >

@@ -45,7 +45,7 @@ export default function RenderClient() {
     principal: false,
   });
 
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [addedPlans, setAddedPlans] = useState<Plan[]>([]);
   const [selectedMedia, setSelectedMedia] = useState("FIBRA ÓPTICA");
   const [searchPlan, setSearchPlan] = useState("");
   const [plansResults, setPlansResults] = useState<Plan[]>([]);
@@ -77,7 +77,7 @@ export default function RenderClient() {
   };
 
   const handleSelectPlan = (plan: Plan) => {
-    setSelectedPlan(plan.documentId);
+    setAddedPlans((prev) => [...prev, plan]);
     setSearchPlan("");
     setPlansResults([]);
     setIsFetchEnabled(false);
@@ -281,28 +281,40 @@ export default function RenderClient() {
                 </div>
               </div>
 
-              <PaymentRow
-                cells={[
-                  "RESIDENCIAL ONE SOCIAL (200 MBPS) - corte 25",
-                  "20.54",
-                  <DataToggle
-                    key="principal"
-                    label=""
-                    isOn={toggles.principal}
-                    onToggle={() => handleToggle("principal")}
-                  />,
-                  ".00",
-                  "0",
-                  <div key="actions" className="flex justify-center gap-2">
-                    <Button className="px-1.5 py-0.5 text-xs bg-white text-red-600 hover:bg-red-50 border border-red-200 rounded">
-                      Elim.
-                    </Button>
-                    <Button className="px-1.5 py-0.5 text-xs bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-200 rounded">
-                      $ Desc.
-                    </Button>
-                  </div>,
-                ]}
-              />
+              {addedPlans.length > 0 ? (
+                addedPlans.map((plan, index) => (
+                  <PaymentRow
+                    key={`${plan.documentId}-${index}`}
+                    cells={[
+                      `${plan.plan} - corte ${plan.cut}`,
+                      plan.valor?.toString() || "0",
+                      <DataToggle
+                        key={`principal-${index}`}
+                        label=""
+                        isOn={toggles.principal}
+                        onToggle={() => handleToggle("principal")}
+                      />,
+                      plan.descuento?.toString() || ".00",
+                      plan.meses?.toString() || "0",
+                      <div key={`actions-${index}`} className="flex justify-center gap-2">
+                        <Button
+                          onClick={() => setAddedPlans((prev) => prev.filter((_, i) => i !== index))}
+                          className="px-1.5 py-0.5 text-xs bg-white text-red-600 hover:bg-red-50 border border-red-200 rounded"
+                        >
+                          Elim.
+                        </Button>
+                        <Button className="px-1.5 py-0.5 text-xs bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-200 rounded">
+                          $ Desc.
+                        </Button>
+                      </div>,
+                    ]}
+                  />
+                ))
+              ) : (
+                <div className="p-4 text-center text-xs text-gray-500 col-span-full">
+                  No hay planes asignados. Busque y seleccione uno.
+                </div>
+              )}
             </CompactTable>
           </ClientDataRow>
 
