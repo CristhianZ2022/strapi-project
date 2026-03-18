@@ -8,7 +8,7 @@ export async function fetchClients(): Promise<{ data: Client[] }> {
     const response = await strapiJson<{
       data: Client[];
       meta: Record<string, unknown>;
-    }>("/api/clientes");
+    }>("/api/clientes?populate=*");
 
     return { data: response.data };
   } catch (error) {
@@ -24,7 +24,7 @@ export async function fetchClientById(
     const response = await strapiJson<{
       data: Client;
       meta: Record<string, unknown>;
-    }>(`/api/clientes/${documentId}`);
+    }>(`/api/clientes/${documentId}?populate=*`);
 
     return { data: response.data };
   } catch (error) {
@@ -63,12 +63,17 @@ export async function updateClientById(
   data: Partial<Omit<Client, "documentId">>
 ): Promise<{ data: Client }> {
   try {
+    const payload = { ...data };
+    if (payload.plans) {
+      payload.plans = payload.plans.map((plan) => plan.documentId) as unknown as Plan[];
+    }
+
     const response = await strapiJson<{
       data: Client;
       meta: Record<string, unknown>;
     }>(`/api/clientes/${documentId}`, {
       method: "PUT",
-      body: JSON.stringify({ data }),
+      body: JSON.stringify({ data: payload }),
     });
 
     return { data: response.data };
