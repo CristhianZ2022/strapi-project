@@ -9,6 +9,8 @@ export interface Client {
     telefono: number;
     estado: string;
     valores: number;
+    plans: Plan[];
+    tipoCliente: string;
 }
 
 export interface User {
