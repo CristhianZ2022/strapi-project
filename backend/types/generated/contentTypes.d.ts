@@ -465,6 +465,7 @@ export interface ApiClienteCliente extends Struct.CollectionTypeSchema {
     nombres: Schema.Attribute.String;
     plans: Schema.Attribute.Relation<'oneToMany', 'api::plan.plan'>;
     publishedAt: Schema.Attribute.DateTime;
+    reference: Schema.Attribute.Component<'component.references', true>;
     telefono: Schema.Attribute.BigInteger;
     tipoCliente: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
@@ -534,6 +535,37 @@ export interface ApiPlanPlan extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     valor: Schema.Attribute.Decimal & Schema.Attribute.Required;
+  };
+}
+
+export interface ApiReferenceReference extends Struct.CollectionTypeSchema {
+  collectionName: 'references';
+  info: {
+    displayName: 'reference';
+    pluralName: 'references';
+    singularName: 'reference';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    fullnames: Schema.Attribute.String;
+    identificacion: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::reference.reference'
+    > &
+      Schema.Attribute.Private;
+    phone: Schema.Attribute.BigInteger;
+    publishedAt: Schema.Attribute.DateTime;
+    relationship: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1052,6 +1084,7 @@ declare module '@strapi/strapi' {
       'api::cliente.cliente': ApiClienteCliente;
       'api::home-page.home-page': ApiHomePageHomePage;
       'api::plan.plan': ApiPlanPlan;
+      'api::reference.reference': ApiReferenceReference;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

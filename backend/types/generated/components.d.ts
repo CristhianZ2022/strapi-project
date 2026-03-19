@@ -15,6 +15,14 @@ export interface ComponentLink extends Struct.ComponentSchema {
   };
 }
 
+export interface ComponentReferences extends Struct.ComponentSchema {
+  collectionName: 'components_component_references';
+  info: {
+    displayName: 'references';
+  };
+  attributes: {};
+}
+
 export interface LayoutHeroSection extends Struct.ComponentSchema {
   collectionName: 'components_layout_hero_sections';
   info: {
@@ -33,6 +41,7 @@ declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'component.link': ComponentLink;
+      'component.references': ComponentReferences;
       'layout.hero-section': LayoutHeroSection;
     }
   }

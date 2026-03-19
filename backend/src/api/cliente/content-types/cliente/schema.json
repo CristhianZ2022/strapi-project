@@ -53,6 +53,11 @@
     },
     "tipoCliente": {
       "type": "string"
+    },
+    "reference": {
+      "type": "component",
+      "component": "component.references",
+      "repeatable": true
     }
   }
 }
