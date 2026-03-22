@@ -468,6 +468,7 @@ export interface ApiClienteCliente extends Struct.CollectionTypeSchema {
     reference: Schema.Attribute.Component<'component.references', true>;
     telefono: Schema.Attribute.BigInteger;
     tipoCliente: Schema.Attribute.String;
+    tipoPlan: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

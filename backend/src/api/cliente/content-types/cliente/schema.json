@@ -54,6 +54,9 @@
     "tipoCliente": {
       "type": "string"
     },
+    "tipoPlan": {
+      "type": "string"
+    },
     "reference": {
       "type": "component",
       "component": "component.references",

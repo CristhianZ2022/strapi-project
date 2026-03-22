@@ -6,7 +6,7 @@ import { useClientById } from "@/hooks/useClientById";
 import { useUpdateClient } from "@/hooks/useUpdateClient";
 
 export default function FooterControl() {
-  const { selectedClientId, isEditing, setIsEditing, formData, resetFormData } =
+  const { selectedClientId, isEditing, setIsEditing, formData, resetFormData, isValidToSave, validationError } =
     useClientContext();
 
   const { data: client } = useClientById(selectedClientId || "");
@@ -40,9 +40,9 @@ export default function FooterControl() {
         {isEditing ? (
           <>
             <Button
-              className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm px-6"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm px-6 disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleSave}
-              disabled={updateClient.isPending}
+              disabled={updateClient.isPending || !isValidToSave}
             >
               {updateClient.isPending ? "Guardando..." : "Guardar"}
             </Button>
@@ -111,8 +111,13 @@ export default function FooterControl() {
         </Button>
 
         {updateClient.isError && (
-          <p className="w-full text-center text-xs text-red-500 mt-1">
+          <p className="w-full text-center text-xs text-red-500 mt-1 flex-1 basis-full">
             Error al guardar. Intente nuevamente.
+          </p>
+        )}
+        {validationError && isEditing && (
+          <p className="w-full text-center text-xs text-amber-600 mt-1 flex-1 basis-full font-medium">
+            ⚠ {validationError}
           </p>
         )}
       </div>

@@ -16,6 +16,8 @@ interface ClientContextType {
   setFormData: React.Dispatch<React.SetStateAction<EditableClientData>>;
   resetFormData: (client?: Client) => void;
   hasUnsavedChanges: boolean;
+  isValidToSave: boolean;
+  validationError: string | null;
   trySelectClient: (id: string) => boolean;
 }
 
@@ -33,6 +35,32 @@ export function ClientProvider({ children }: { children: ReactNode }) {
     return JSON.stringify(formData) !== JSON.stringify(originalData);
   }, [isEditing, formData, originalData]);
 
+  const isValidToSave = useMemo(() => {
+    if (!isEditing) return true;
+    
+    const currentTipoPlan = formData.tipoPlan !== undefined ? formData.tipoPlan : originalData.tipoPlan;
+    const currentPlans = formData.plans !== undefined ? formData.plans : originalData.plans;
+    
+    if (currentTipoPlan && currentPlans && currentPlans.length > 0) {
+      const hasMismatch = currentPlans.some((plan) => {
+        const planMedia = `${plan.type}`.toLowerCase();
+        return !planMedia.includes(currentTipoPlan.toLowerCase());
+      });
+
+      if (hasMismatch) {
+        return false;
+      }
+    }
+    return true;
+  }, [isEditing, formData.tipoPlan, formData.plans, originalData.tipoPlan, originalData.plans]);
+
+  const validationError = useMemo(() => {
+    if (!isValidToSave) {
+      return "El Tipo de Plan seleccionado no coincide con los planes agregados. Cambie el tipo o elimine los planes incompatibles.";
+    }
+    return null;
+  }, [isValidToSave]);
+
   const resetFormData = useCallback((client?: Client) => {
     if (client) {
       const data: EditableClientData = {
@@ -45,6 +73,7 @@ export function ClientProvider({ children }: { children: ReactNode }) {
         estado: client.estado,
         valores: client.valores,
         plans: client.plans,
+        tipoPlan: client.tipoPlan,
         tipoCliente: client.tipoCliente,
         reference: client.reference,
       };
@@ -69,7 +98,14 @@ export function ClientProvider({ children }: { children: ReactNode }) {
       setSelectedClientId(id);
       return true;
     }
-    alert("Tiene cambios sin guardar. Guarde o cancele antes de cambiar de cliente.");
+    if (isEditing && hasUnsavedChanges) {
+      alert("Tiene cambios sin guardar. Guarde o cancele antes de cambiar de cliente.");
+      return false;
+    }
+
+    // if(formData.tipoPlan !== originalData.plans.map((plan) => plan.type)){
+      
+    // }
     return false;
   }, [isEditing, hasUnsavedChanges]);
 
@@ -86,6 +122,8 @@ export function ClientProvider({ children }: { children: ReactNode }) {
         setFormData,
         resetFormData,
         hasUnsavedChanges,
+        isValidToSave,
+        validationError,
         trySelectClient,
       }}
     >
