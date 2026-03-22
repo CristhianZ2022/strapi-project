@@ -56,7 +56,6 @@ export default function RenderClient() {
     principal: false,
   });
 
-  const [selectedMedia, setSelectedMedia] = useState("FIBRA ÓPTICA");
   const [searchPlan, setSearchPlan] = useState("");
   const [plansResults, setPlansResults] = useState<Plan[]>([]);
   const [isFetchEnabled, setIsFetchEnabled] = useState(false);
@@ -78,8 +77,10 @@ export default function RenderClient() {
       const media = `${plan.type}`.toLowerCase();
       const search = searchPlan.toLowerCase();
 
-      if (media.includes(selectedMedia.toLowerCase())) {
-        return plan.plan.toLowerCase().includes(search);
+      if(client?.tipoPlan){
+        if (media.includes(client.tipoPlan.toLowerCase())) {
+          return plan.plan.toLowerCase().includes(search);
+        }
       }
     });
 
@@ -306,8 +307,8 @@ export default function RenderClient() {
           <DataRadioGroup
             label="Medio Plan"
             name="media"
-            value={selectedMedia}
-            onChange={setSelectedMedia}
+            value={isEditing ? (formData.tipoPlan ?? "") : client.tipoPlan}
+            onChange={(value) => handleField("tipoPlan", value)}
             options={[
               { label: "COBRE", value: "COBRE" },
               { label: "MEDIO INALÁMBRICO", value: "MEDIO INALÁMBRICO" },
