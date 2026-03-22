@@ -19,7 +19,6 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-
   return (
     <Providers>
       <div className="flex flex-col min-h-screen">

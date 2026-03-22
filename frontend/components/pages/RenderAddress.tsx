@@ -24,7 +24,7 @@ export default function RenderAddress() {
     isLoading,
     error,
   } = useClientById(selectedClientId || "");
-
+  
 
   const [toggles, setToggles] = useState({
     clienteRelacionado: false,
@@ -47,12 +47,21 @@ export default function RenderAddress() {
     [setFormData],
   );
 
-  const updateReference = (index: number, field: keyof Reference, value: string) => {
+  const updateReference = (
+    index: number,
+    field: keyof Reference,
+    value: string,
+  ) => {
     if (!isEditing) return;
     setFormData((prev) => {
       const current = [...(prev.reference || client?.reference || [])];
       while (current.length <= index) {
-        current.push({ identificacion: "", fullnames: "", relationship: "", phone: 0 } as unknown as Reference);
+        current.push({
+          identificacion: "",
+          fullnames: "",
+          relationship: "",
+          phone: 0,
+        } as unknown as Reference);
       }
       current[index] = { ...current[index], [field]: value };
       return { ...prev, reference: current };
@@ -138,7 +147,15 @@ export default function RenderAddress() {
                   "w-full flex flex-col bg-indigo-50/20 dark:bg-indigo-900/10 border-b border-indigo-100 dark:border-indigo-900/30",
                 )}
               >
-                <FormFamily references={isEditing ? (formData.reference || client?.reference || []) : (client?.reference || [])} isEditing={isEditing} updateReference={updateReference} />
+                <FormFamily
+                  references={
+                    isEditing
+                      ? formData.reference || client?.reference || []
+                      : client?.reference || []
+                  }
+                  isEditing={isEditing}
+                  updateReference={updateReference}
+                />
               </section>
             </CompactTable>
           </ClientDataRow>

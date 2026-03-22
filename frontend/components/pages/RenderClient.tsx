@@ -77,7 +77,7 @@ export default function RenderClient() {
       const media = `${plan.type}`.toLowerCase();
       const search = searchPlan.toLowerCase();
 
-      if(client?.tipoPlan){
+      if (client?.tipoPlan) {
         if (media.includes(client.tipoPlan.toLowerCase())) {
           return plan.plan.toLowerCase().includes(search);
         }
