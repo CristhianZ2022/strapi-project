@@ -12,12 +12,12 @@ export interface Client {
     estado: string;
     valores: number;
     plans: Plan[];
+    tipoPlan: string;
     tipoCliente: string;
     reference: Reference[];
 }
 
 export interface Reference {
-  documentId: string;
   identificacion: string;
   fullnames: string;
   relationship: string;

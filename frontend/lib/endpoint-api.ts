@@ -60,18 +60,29 @@ export async function fetchPlans() {
 
 export async function updateClientById(
   documentId: string,
-  data: Partial<Omit<Client, "documentId">>
+  data: Partial<Omit<Client, "documentId">>,
 ): Promise<{ data: Client }> {
   try {
     const payload = { ...data };
     if (payload.plans) {
-      payload.plans = payload.plans.map((plan) => plan.documentId) as unknown as Plan[];
+      payload.plans = payload.plans.map(
+        (plan) => plan.documentId,
+      ) as unknown as Plan[];
     }
-    
+
+    // if (payload.reference) {
+    //   payload.reference = payload.reference.filter(
+    //     (ref) => ref.identificacion?.trim() !== "" || ref.fullnames?.trim() !== ""
+    //   );
+    // }
+
     if (payload.reference) {
-      payload.reference = payload.reference.filter(
-        (ref) => ref.identificacion?.trim() !== "" || ref.fullnames?.trim() !== ""
-      );
+      payload.reference = payload.reference.map((ref) => ({
+        identificacion: ref.identificacion ?? "",
+        fullnames: ref.fullnames ?? "",
+        relationship: ref.relationship ?? "",
+        phone: ref.phone ?? 0,
+      }));
     }
 
     const response = await strapiJson<{
