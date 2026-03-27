@@ -67,6 +67,7 @@ export function ClientProvider({ children }: { children: ReactNode }) {
         nombres: client.nombres,
         apellidos: client.apellidos,
         identificacion: client.identificacion,
+        currentAge: client.currentAge,
         ciudad: client.ciudad,
         email: client.email,
         telefono: client.telefono,
@@ -74,6 +75,7 @@ export function ClientProvider({ children }: { children: ReactNode }) {
         valores: client.valores,
         plans: client.plans,
         tipoPlan: client.tipoPlan,
+        planPrincipal: Boolean(client.planPrincipal),
         tipoCliente: client.tipoCliente,
         reference: client.reference,
       };
