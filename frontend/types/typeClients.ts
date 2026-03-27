@@ -1,20 +1,20 @@
-
-
 export interface Client {
   documentId: string;
-    nombres: string;
-    apellidos: string;
-    identificacion: string;
-    contrato: number;
-    ciudad: string;
-    email: string;
-    telefono: number;
-    estado: string;
-    valores: number;
-    plans: Plan[];
-    tipoPlan: string;
-    tipoCliente: string;
-    reference: Reference[];
+  nombres: string;
+  apellidos: string;
+  currentAge: string;
+  identificacion: string;
+  contrato: number;
+  ciudad: string;
+  email: string;
+  telefono: number;
+  estado: string;
+  valores: number;
+  plans: Plan[];
+  tipoPlan: string;
+  planPrincipal: boolean;
+  tipoCliente: string;
+  reference: Reference[];
 }
 
 export interface Reference {

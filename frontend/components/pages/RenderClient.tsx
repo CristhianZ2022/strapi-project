@@ -30,6 +30,7 @@ import { styles } from "@/app/styles/styles";
 import { usePlans } from "@/hooks/usePlans";
 import { Plan } from "@/types/typeClients";
 import { SearchPlans } from "../ui/searchParams";
+import CurrentAge from "./current-age";
 
 export default function RenderClient() {
   const { selectedClientId, isEditing, formData, setFormData } =
@@ -63,6 +64,13 @@ export default function RenderClient() {
   const { data: plans } = usePlans(isFetchEnabled);
   const plansData = plans?.data || [];
 
+  const activePlans =
+    (isEditing ? formData.plans || client?.plans : client?.plans) || [];
+  const hasPrincipal =
+    isEditing
+      ? (formData.planPrincipal !== undefined ? formData.planPrincipal : client?.planPrincipal)
+      : client?.planPrincipal;
+
   const handlePlansSearch = (value: string) => {
     setSearchPlan(value);
     if (!isFetchEnabled) setIsFetchEnabled(true);
@@ -91,7 +99,8 @@ export default function RenderClient() {
     if (!isEditing) return;
     setFormData((prev) => {
       const current = prev.plans || client?.plans || [];
-      return { ...prev, plans: [...current, plan] };
+      const newPlans = [...current, plan];
+      return { ...prev, plans: newPlans, planPrincipal: newPlans.length > 0 };
     });
     setSearchPlan("");
     setPlansResults([]);
@@ -102,10 +111,29 @@ export default function RenderClient() {
     if (!isEditing) return;
     setFormData((prev) => {
       const current = prev.plans || client?.plans || [];
-      return { ...prev, plans: current.filter((_, i) => i !== index) };
+      const newPlans = current.filter((_, i) => i !== index);
+      return { ...prev, plans: newPlans, planPrincipal: newPlans.length > 0 };
     });
   };
 
+  const handleTogglePrincipal = (planId: string) => {
+    if (!isEditing) return;
+    setFormData((prev) => {
+      const current = prev.plans || client?.plans || [];
+      const selectedIndex = current.findIndex(p => p.documentId === planId);
+      if (selectedIndex <= 0) return { ...prev, planPrincipal: true };
+      
+      const newPlans = [...current];
+      const [selected] = newPlans.splice(selectedIndex, 1);
+      newPlans.unshift(selected); // Put principal as first element
+      
+      return {
+        ...prev,
+        plans: newPlans,
+        planPrincipal: true,
+      };
+    });
+  };
   const handleToggle = (key: keyof typeof toggles) => {
     setToggles((prev) => ({
       ...prev,
@@ -294,13 +322,22 @@ export default function RenderClient() {
             <div className="flex items-center gap-4">
               <input
                 type="date"
+                value={
+                  isEditing
+                    ? formData.currentAge
+                      ? new Date(formData.currentAge)
+                          .toISOString()
+                          .split("T")[0]
+                      : ""
+                    : client.currentAge
+                      ? new Date(client.currentAge).toISOString().split("T")[0]
+                      : ""
+                }
+                readOnly={!isEditing}
+                onChange={(e) => handleField("currentAge", e.target.value)}
                 className="bg-transparent text-xs text-gray-600 dark:text-gray-300"
-                defaultValue="2000-01-01"
               />
-              <div className="flex items-center gap-2 text-indigo-500/80 text-[11px] bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded">
-                <span>📅 Edad:</span>
-                <span className="font-medium">24 años | 1 meses | 18 días</span>
-              </div>
+              <CurrentAge date={formData.currentAge || client.currentAge} />
             </div>
           </ClientDataRow>
 
@@ -350,14 +387,8 @@ export default function RenderClient() {
                 </div>
               </div>
 
-              {(isEditing
-                ? formData.plans || client.plans || []
-                : client.plans || []
-              )?.length > 0 ? (
-                (isEditing
-                  ? formData.plans || client.plans || []
-                  : client.plans || []
-                ).map((plan, index) => (
+              {activePlans.length > 0 ? (
+                activePlans.map((plan, index) => (
                   <PaymentRow
                     key={`${plan.documentId || "new"}-${index}`}
                     cells={[
@@ -366,8 +397,8 @@ export default function RenderClient() {
                       <DataToggle
                         key={`principal-${index}`}
                         label=""
-                        isOn={toggles.principal}
-                        onToggle={() => handleToggle("principal")}
+                        isOn={index === 0 && !!hasPrincipal}
+                        onToggle={() => plan.documentId && handleTogglePrincipal(plan.documentId)}
                       />,
                       plan.descuento?.toString() || ".00",
                       plan.meses?.toString() || "0",
