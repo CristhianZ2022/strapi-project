@@ -1,5 +1,16 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface ComponentDiscountLaw extends Struct.ComponentSchema {
+  collectionName: 'components_component_discount_laws';
+  info: {
+    displayName: 'discountLaw';
+  };
+  attributes: {
+    disability: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    oldAge: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+  };
+}
+
 export interface ComponentLink extends Struct.ComponentSchema {
   collectionName: 'components_component_links';
   info: {
@@ -45,6 +56,7 @@ export interface LayoutHeroSection extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'component.discount-law': ComponentDiscountLaw;
       'component.link': ComponentLink;
       'component.references': ComponentReferences;
       'layout.hero-section': LayoutHeroSection;

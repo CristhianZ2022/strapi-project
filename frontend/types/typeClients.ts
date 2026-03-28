@@ -16,7 +16,7 @@ export interface Client {
   tipoCliente: string;
   reference: Reference[];
   automaticCut: boolean;
-  discountLaw: DiscountLaw;
+  discountLaw: DiscountLaw[];
 }
 
 export interface DiscountLaw {

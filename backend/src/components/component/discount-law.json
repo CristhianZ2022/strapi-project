@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_component_discount_laws",
+  "info": {
+    "displayName": "discountLaw"
+  },
+  "options": {},
+  "attributes": {
+    "disability": {
+      "type": "boolean",
+      "default": false
+    },
+    "oldAge": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "config": {}
+}

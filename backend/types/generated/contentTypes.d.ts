@@ -442,12 +442,14 @@ export interface ApiClienteCliente extends Struct.CollectionTypeSchema {
   };
   attributes: {
     apellidos: Schema.Attribute.String;
+    automaticCut: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     ciudad: Schema.Attribute.String;
     contrato: Schema.Attribute.BigInteger;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     currentAge: Schema.Attribute.Date;
+    discountLaw: Schema.Attribute.Component<'component.discount-law', true>;
     email: Schema.Attribute.Email;
     estado: Schema.Attribute.Enumeration<
       ['ACTIVO', 'CORTADO', 'SUSPENDIDO', 'TERMINADO']

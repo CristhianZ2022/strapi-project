@@ -28,7 +28,7 @@ import {
 import { Input } from "../ui/input";
 import { styles } from "@/app/styles/styles";
 import { usePlans } from "@/hooks/usePlans";
-import { Plan } from "@/types/typeClients";
+import { DiscountLaw, Plan } from "@/types/typeClients";
 import { SearchPlans } from "../ui/searchParams";
 import CurrentAge from "./current-age";
 
@@ -42,7 +42,10 @@ export default function RenderClient() {
   } = useClientById(selectedClientId || "");
 
   const handleField = useCallback(
-    (field: keyof EditableClientData, value: string | number) => {
+    <K extends keyof EditableClientData>(
+      field: K,
+      value: EditableClientData[K],
+    ) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
     },
     [setFormData],
@@ -66,10 +69,11 @@ export default function RenderClient() {
 
   const activePlans =
     (isEditing ? formData.plans || client?.plans : client?.plans) || [];
-  const hasPrincipal =
-    isEditing
-      ? (formData.planPrincipal !== undefined ? formData.planPrincipal : client?.planPrincipal)
-      : client?.planPrincipal;
+  const hasPrincipal = isEditing
+    ? formData.planPrincipal !== undefined
+      ? formData.planPrincipal
+      : client?.planPrincipal
+    : client?.planPrincipal;
 
   const handlePlansSearch = (value: string) => {
     setSearchPlan(value);
@@ -120,13 +124,13 @@ export default function RenderClient() {
     if (!isEditing) return;
     setFormData((prev) => {
       const current = prev.plans || client?.plans || [];
-      const selectedIndex = current.findIndex(p => p.documentId === planId);
+      const selectedIndex = current.findIndex((p) => p.documentId === planId);
       if (selectedIndex <= 0) return { ...prev, planPrincipal: true };
-      
+
       const newPlans = [...current];
       const [selected] = newPlans.splice(selectedIndex, 1);
       newPlans.unshift(selected); // Put principal as first element
-      
+
       return {
         ...prev,
         plans: newPlans,
@@ -134,11 +138,43 @@ export default function RenderClient() {
       };
     });
   };
+
   const handleToggle = (key: keyof typeof toggles) => {
     setToggles((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
+  };
+
+  const handleToggleDiscount = (field: keyof DiscountLaw) => {
+    if (!isEditing) return;
+
+    const currentList = Array.isArray(formData.discountLaw)
+      ? formData.discountLaw
+      : formData.discountLaw
+        ? [formData.discountLaw]
+        : [];
+
+    const current = currentList[0] || {
+      disability: false,
+      oldAge: false,
+    };
+
+    if (current[field]) {
+      handleField("discountLaw", [
+        {
+          disability: false,
+          oldAge: false,
+        },
+      ]);
+    } else {
+      handleField("discountLaw", [
+        {
+          disability: field === "disability",
+          oldAge: field === "oldAge",
+        },
+      ]);
+    }
   };
 
   if (!selectedClientId) {
@@ -398,7 +434,10 @@ export default function RenderClient() {
                         key={`principal-${index}`}
                         label=""
                         isOn={index === 0 && !!hasPrincipal}
-                        onToggle={() => plan.documentId && handleTogglePrincipal(plan.documentId)}
+                        onToggle={() =>
+                          plan.documentId &&
+                          handleTogglePrincipal(plan.documentId)
+                        }
                       />,
                       plan.descuento?.toString() || ".00",
                       plan.meses?.toString() || "0",
@@ -456,39 +495,49 @@ export default function RenderClient() {
 
           <DataToggle
             label="Corte Automático"
-            onToggle={() => handleToggle("corteAutomatico")}
-            isOn={toggles.corteAutomatico}
+            onToggle={() => handleField("automaticCut", !formData.automaticCut)}
+            isOn={Boolean(
+              isEditing ? formData.automaticCut : client.automaticCut,
+            )}
           />
+          {[0].map((index) => {
+            const discount = formData.discountLaw?.[index] || client.discountLaw?.[index] || {
+              disability: false,
+              oldAge: false,
+            };
 
-          <ClientDataRow label="Aplica Dscto.">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-600 text-[11px]">
-                  Por Discapacidad:
-                </span>
-                <DataToggle
-                  label=""
-                  onToggle={() => handleToggle("descuentoDiscapacidad")}
-                  isOn={toggles.descuentoDiscapacidad}
-                  size="sm"
-                  rowClassName="border-none bg-transparent hover:bg-transparent min-h-0 p-0"
-                />
-              </div>
-              <Separator />
-              <div className="flex items-center gap-2">
-                <span className="text-gray-600 text-[11px]">
-                  Por Tercera Edad:
-                </span>
-                <DataToggle
-                  label=""
-                  onToggle={() => handleToggle("descuentoTerceraEdad")}
-                  isOn={toggles.descuentoTerceraEdad}
-                  size="sm"
-                  rowClassName="border-none bg-transparent hover:bg-transparent min-h-0 p-0"
-                />
-              </div>
-            </div>
-          </ClientDataRow>
+            return (
+              <ClientDataRow key={index} label="Aplica Dscto.">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 text-[11px]">
+                      Por Discapacidad:
+                    </span>
+                    <DataToggle
+                      label=""
+                      onToggle={() => handleToggleDiscount("disability")}
+                      isOn={discount.disability}
+                      size="sm"
+                      rowClassName="border-none bg-transparent hover:bg-transparent min-h-0 p-0"
+                    />
+                  </div>
+                  <Separator />
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 text-[11px]">
+                      Por Tercera Edad:
+                    </span>
+                    <DataToggle
+                      label=""
+                      onToggle={() => handleToggleDiscount("oldAge")}
+                      isOn={discount.oldAge}
+                      size="sm"
+                      rowClassName="border-none bg-transparent hover:bg-transparent min-h-0 p-0"
+                    />
+                  </div>
+                </div>
+              </ClientDataRow>
+            );
+          })}
         </section>
 
         <section className={cn(styles.rightColumn, "w-1/4 flex flex-col")}>

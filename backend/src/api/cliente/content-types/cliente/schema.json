@@ -68,6 +68,15 @@
     "planPrincipal": {
       "type": "boolean",
       "default": false
+    },
+    "automaticCut": {
+      "type": "boolean",
+      "default": true
+    },
+    "discountLaw": {
+      "type": "component",
+      "component": "component.discount-law",
+      "repeatable": true
     }
   }
 }
