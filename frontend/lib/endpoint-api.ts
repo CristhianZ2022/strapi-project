@@ -1,7 +1,15 @@
 "use server";
 
-import { Client, User, Plan } from "@/types/typeClients";
+import { Client, User, Plan, FileItem, StrapiMedia } from "@/types/typeClients";
 import { strapiJson } from "./api";
+
+/** Deep populate query for client with nested media in file components */
+const CLIENT_POPULATE = [
+  "populate[plans]=true",
+  "populate[reference]=true",
+  "populate[discountLaw]=true",
+  "populate[files][populate][file]=true",
+].join("&");
 
 export async function fetchClients(): Promise<{ data: Client[] }> {
   try {
@@ -24,7 +32,7 @@ export async function fetchClientById(
     const response = await strapiJson<{
       data: Client;
       meta: Record<string, unknown>;
-    }>(`/api/clientes/${documentId}?populate=*`);
+    }>(`/api/clientes/${documentId}?${CLIENT_POPULATE}`);
 
     return { data: response.data };
   } catch (error) {
@@ -70,12 +78,6 @@ export async function updateClientById(
       ) as unknown as Plan[];
     }
 
-    // if (payload.reference) {
-    //   payload.reference = payload.reference.filter(
-    //     (ref) => ref.identificacion?.trim() !== "" || ref.fullnames?.trim() !== ""
-    //   );
-    // }
-
     if (payload.reference) {
       payload.reference = payload.reference.map((ref) => ({
         identificacion: ref.identificacion ?? "",
@@ -85,10 +87,29 @@ export async function updateClientById(
       }));
     }
 
+    if (payload.discountLaw) {
+      if (
+        !payload.discountLaw.disability && 
+        !payload.discountLaw.oldAge
+      ) {
+        payload.discountLaw = null;
+      }
+    }
+
+    // Serialize file components: send media ID reference instead of full object
+    if (payload.files && Array.isArray(payload.files)) {
+      payload.files = payload.files.map((f: FileItem) => ({
+        name: f.name,
+        filename: f.filename,
+        // multiple: true requires an array of IDs
+        file: f.file?.[0]?.id ? [f.file[0].id] : [],
+      })) as unknown as FileItem[];
+    }
+
     const response = await strapiJson<{
       data: Client;
       meta: Record<string, unknown>;
-    }>(`/api/clientes/${documentId}?populate=*`, {
+    }>(`/api/clientes/${documentId}?${CLIENT_POPULATE}`, {
       method: "PUT",
       body: JSON.stringify({ data: payload }),
     });
@@ -97,5 +118,19 @@ export async function updateClientById(
   } catch (error) {
     console.error("Error updating client by ID:", error);
     throw new Error("Error updating client by ID");
+  }
+}
+
+export async function uploadFileToStrapi(
+  formData: FormData
+): Promise<StrapiMedia[]> {
+  try {
+    return await strapiJson<StrapiMedia[]>("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+  } catch (error) {
+    console.error("Error uploading file to Strapi:", error);
+    throw new Error("Error uploading file to Strapi");
   }
 }

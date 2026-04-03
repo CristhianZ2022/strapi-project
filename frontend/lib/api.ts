@@ -15,12 +15,14 @@ export async function fetchStrapi(
 ): Promise<Response> {
   const authToken = await getAuthToken();
 
-  const headers = new Headers({
-    "Content-Type": "application/json",
-    ...options.headers,
-  })
+  const isFormData = options.body instanceof FormData;
 
-  if(authToken) headers.set('Authorization', `Bearer ${authToken}`);
+  const headers = new Headers({
+    ...(!isFormData && { "Content-Type": "application/json" }),
+    ...options.headers,
+  });
+
+  if (authToken) headers.set("Authorization", `Bearer ${authToken}`);
   
   const fetchUrl = `${STRAPI_BASE_URL}${endpoint}`;
 

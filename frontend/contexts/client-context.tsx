@@ -80,6 +80,8 @@ export function ClientProvider({ children }: { children: ReactNode }) {
         reference: client.reference,
         automaticCut: client.automaticCut,
         discountLaw: client.discountLaw,
+        withholdingAgent: Boolean(client.withholdingAgent),
+        files: client.files,
       };
       setFormData(data);
       setOriginalData(data);

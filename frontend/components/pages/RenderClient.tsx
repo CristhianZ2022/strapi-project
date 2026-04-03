@@ -31,6 +31,7 @@ import { usePlans } from "@/hooks/usePlans";
 import { DiscountLaw, Plan } from "@/types/typeClients";
 import { SearchPlans } from "../ui/searchParams";
 import CurrentAge from "./current-age";
+import FileUploader from "../ui/files";
 
 export default function RenderClient() {
   const { selectedClientId, isEditing, formData, setFormData } =
@@ -149,31 +150,23 @@ export default function RenderClient() {
   const handleToggleDiscount = (field: keyof DiscountLaw) => {
     if (!isEditing) return;
 
-    const currentList = Array.isArray(formData.discountLaw)
-      ? formData.discountLaw
-      : formData.discountLaw
-        ? [formData.discountLaw]
-        : [];
+    const current =
+      formData.discountLaw !== undefined
+        ? formData.discountLaw
+        : client?.discountLaw;
 
-    const current = currentList[0] || {
-      disability: false,
-      oldAge: false,
-    };
+    const isCurrentlyActive = current?.[field];
 
-    if (current[field]) {
-      handleField("discountLaw", [
-        {
-          disability: false,
-          oldAge: false,
-        },
-      ]);
+    if (isCurrentlyActive) {
+      handleField("discountLaw", {
+        disability: false,
+        oldAge: false,
+      });
     } else {
-      handleField("discountLaw", [
-        {
-          disability: field === "disability",
-          oldAge: field === "oldAge",
-        },
-      ]);
+      handleField("discountLaw", {
+        disability: field === "disability",
+        oldAge: field === "oldAge",
+      });
     }
   };
 
@@ -492,7 +485,6 @@ export default function RenderClient() {
               </div>
             </div>
           </ClientDataRow>
-
           <DataToggle
             label="Corte Automático"
             onToggle={() => handleField("automaticCut", !formData.automaticCut)}
@@ -500,90 +492,60 @@ export default function RenderClient() {
               isEditing ? formData.automaticCut : client.automaticCut,
             )}
           />
-          {[0].map((index) => {
-            const discount = formData.discountLaw?.[index] || client.discountLaw?.[index] || {
-              disability: false,
-              oldAge: false,
-            };
 
-            return (
-              <ClientDataRow key={index} label="Aplica Dscto.">
-                <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-600 text-[11px]">
-                      Por Discapacidad:
-                    </span>
-                    <DataToggle
-                      label=""
-                      onToggle={() => handleToggleDiscount("disability")}
-                      isOn={discount.disability}
-                      size="sm"
-                      rowClassName="border-none bg-transparent hover:bg-transparent min-h-0 p-0"
-                    />
-                  </div>
-                  <Separator />
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-600 text-[11px]">
-                      Por Tercera Edad:
-                    </span>
-                    <DataToggle
-                      label=""
-                      onToggle={() => handleToggleDiscount("oldAge")}
-                      isOn={discount.oldAge}
-                      size="sm"
-                      rowClassName="border-none bg-transparent hover:bg-transparent min-h-0 p-0"
-                    />
-                  </div>
-                </div>
-              </ClientDataRow>
-            );
-          })}
+          <ClientDataRow label="Aplica Dscto.">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-600 text-[11px]">
+                  Por Discapacidad:
+                </span>
+                <DataToggle
+                  label=""
+                  onToggle={() => handleToggleDiscount("disability")}
+                  isOn={Boolean(
+                    isEditing
+                      ? formData.discountLaw?.disability
+                      : client.discountLaw?.disability,
+                  )}
+                  size="sm"
+                  rowClassName="border-none bg-transparent hover:bg-transparent min-h-0 p-0"
+                />
+              </div>
+              <Separator />
+              <div className="flex items-center gap-2">
+                <span className="text-gray-600 text-[11px]">
+                  Por Tercera Edad:
+                </span>
+                <DataToggle
+                  label=""
+                  onToggle={() => handleToggleDiscount("oldAge")}
+                  isOn={Boolean(
+                    isEditing
+                      ? formData.discountLaw?.oldAge
+                      : client.discountLaw?.oldAge,
+                  )}
+                  size="sm"
+                  rowClassName="border-none bg-transparent hover:bg-transparent min-h-0 p-0"
+                />
+              </div>
+            </div>
+          </ClientDataRow>
         </section>
 
         <section className={cn(styles.rightColumn, "w-1/4 flex flex-col")}>
-          <div className="p-4 border-b border-indigo-100 dark:border-indigo-900/30 bg-white dark:bg-gray-950">
-            <DataToggle
-              label="¿Es agente de retención?"
-              onToggle={() => handleToggle("agenteRetencion")}
-              isOn={toggles.agenteRetencion}
-              rowClassName="border-none bg-transparent hover:bg-transparent min-h-0 p-0"
-            />
-          </div>
-          <div className="p-4 flex flex-col gap-3">
-            <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                Subir Archivos
-              </label>
-              <div className="flex gap-2">
-                <Select>
-                  <option>Seleccione tipo de archivo</option>
-                </Select>
-                <Button className={styles.uploadButton}>CARGAR</Button>
-              </div>
-            </div>
-
-            <div className="border border-indigo-100 dark:border-indigo-900/30 rounded-lg bg-white dark:bg-gray-950 flex-1 overflow-hidden shadow-sm flex flex-col">
-              <table className="min-h-80 w-full text-left">
-                <thead className="sticky top-0 bg-indigo-50/50 dark:bg-indigo-900/20 z-10">
-                  <tr>
-                    <th className={styles.tableHeader}>Archivo</th>
-                    <th className={styles.tableHeader}>Tipo</th>
-                    <th className={styles.tableHeader}>Opción</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td
-                      colSpan={3}
-                      className="p-8 text-center text-gray-400 italic text-[11px]"
-                    >
-                      No hay archivos adjuntos
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <DataToggle
+            label="¿Es agente de retención?"
+            onToggle={() =>
+              handleField("withholdingAgent", !formData.withholdingAgent)
+            }
+            isOn={Boolean(
+              isEditing ? formData.withholdingAgent : client.withholdingAgent,
+            )}
+            rowClassName="border-none bg-transparent hover:bg-transparent min-h-0 p-0"
+          />
+          <FileUploader
+          files={isEditing ? formData.files : client.files || []}
+          />
 
           <div className="border-t border-indigo-100 dark:border-indigo-900/30 bg-white dark:bg-gray-950">
             <DataSelect
