@@ -16,7 +16,9 @@ export interface Client {
   tipoCliente: string;
   reference: Reference[];
   automaticCut: boolean;
-  discountLaw: DiscountLaw[];
+  discountLaw: DiscountLaw | null;
+  withholdingAgent: boolean;
+  files: FileItem[];
 }
 
 export interface DiscountLaw {
@@ -44,4 +46,28 @@ export interface Plan {
   valor: number;
   descuento: number;
   meses: number;
+}
+
+/** Represents a media file stored in Strapi's upload provider */
+export interface StrapiMedia {
+  id: number;
+  documentId?: string;
+  url: string;
+  name: string;
+  mime: string;
+}
+
+/**
+ * Represents a file component entry (component.file) in Strapi.
+ * Each entry has metadata (name, filename) and either:
+ * - `file`: a populated StrapiMedia from the backend
+ * - `pendingFile`: a browser File object waiting to be uploaded
+ */
+export interface FileItem {
+  id?: number;
+  documentId?: string;
+  name: string;
+  filename?: string;
+  file?: StrapiMedia[] | null;
+  pendingFile?: File;
 }

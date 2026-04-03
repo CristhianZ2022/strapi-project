@@ -6,11 +6,18 @@ import { useClientById } from "@/hooks/useClientById";
 import { useUpdateClient } from "@/hooks/useUpdateClient";
 
 export default function FooterControl() {
-  const { selectedClientId, isEditing, setIsEditing, formData, resetFormData, isValidToSave, validationError } =
-    useClientContext();
+  const {
+    selectedClientId,
+    isEditing,
+    setIsEditing,
+    formData,
+    resetFormData,
+    isValidToSave,
+    validationError,
+  } = useClientContext();
 
   const { data: client } = useClientById(selectedClientId || "");
-  const updateClient = useUpdateClient();
+  const { updateClient, uploadFiles } = useUpdateClient();
 
   const handleEdit = () => {
     if (client) {
@@ -19,11 +26,55 @@ export default function FooterControl() {
     }
   };
 
-  const handleSave = () => {
+  /**
+   * Save flow:
+   * 1. Upload any pending files (pendingFile) to /api/upload
+   * 2. Map uploaded media IDs back to the file component entries
+   * 3. Update the client with all data including file references
+   */
+  const handleSave = async () => {
     if (!selectedClientId) return;
 
+    const dataToSave = { ...formData };
+    const currentFiles = [...(dataToSave.files || [])];
+
+    // Step 1: Upload pending files
+    const pendingFiles = currentFiles.filter((f) => f.pendingFile);
+
+    if (pendingFiles.length > 0) {
+      const uploadFormData = new FormData();
+      pendingFiles.forEach((f) => {
+        if (f.pendingFile) {
+          uploadFormData.append("files", f.pendingFile);
+        }
+      });
+
+      try {
+        const uploadedMedia = await uploadFiles.mutateAsync(uploadFormData);
+
+        // Step 2: Map uploaded media back to their corresponding file entries
+        let uploadIdx = 0;
+        dataToSave.files = currentFiles.map((f) => {
+          if (f.pendingFile && uploadIdx < uploadedMedia.length) {
+            const media = uploadedMedia[uploadIdx++];
+            return {
+              name: f.name,
+              filename: f.filename,
+              file: [media],
+              pendingFile: undefined,
+            };
+          }
+          return f;
+        });
+      } catch (error) {
+        console.error("Error uploading files:", error);
+        return; // Abort save if upload fails
+      }
+    }
+
+    // Step 3: Update client with all data
     updateClient.mutate(
-      { documentId: selectedClientId, data: formData },
+      { documentId: selectedClientId, data: dataToSave },
       { onSuccess: () => resetFormData(undefined) },
     );
   };
@@ -33,6 +84,7 @@ export default function FooterControl() {
   };
 
   const hasClient = !!selectedClientId;
+  const isSaving = updateClient.isPending || uploadFiles.isPending;
 
   return (
     <footer className="w-full bg-white dark:bg-gray-950 border-t border-indigo-100 dark:border-indigo-900/30 p-3 shadow-sm mt-auto">
@@ -42,15 +94,15 @@ export default function FooterControl() {
             <Button
               className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm px-6 disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleSave}
-              disabled={updateClient.isPending || !isValidToSave}
+              disabled={isSaving || !isValidToSave}
             >
-              {updateClient.isPending ? "Guardando..." : "Guardar"}
+              {isSaving ? "Guardando..." : "Guardar"}
             </Button>
             <Button
               variant={"outline"}
               className="border-red-200 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/50"
               onClick={handleCancel}
-              disabled={updateClient.isPending}
+              disabled={isSaving}
             >
               Cancelar
             </Button>
@@ -110,9 +162,11 @@ export default function FooterControl() {
           Enviar Contrato
         </Button>
 
-        {updateClient.isError && (
+        {(updateClient.isError || uploadFiles.isError) && (
           <p className="w-full text-center text-xs text-red-500 mt-1 flex-1 basis-full">
-            Error al guardar. Intente nuevamente.
+            {uploadFiles.isError
+              ? "Error al subir archivos. Intente nuevamente."
+              : "Error al guardar. Intente nuevamente."}
           </p>
         )}
         {validationError && isEditing && (
