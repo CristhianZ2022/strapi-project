@@ -14,7 +14,6 @@ import { CompactTable } from "../ui/compact-table";
 import FormFamily from "../ui/formFamily";
 import { DataToggle } from "../ui/client-data-fields";
 import { useState, useCallback } from "react";
-import { Reference } from "@/types/typeClients";
 
 export default function RenderAddress() {
   const { selectedClientId, isEditing, formData, setFormData } =
@@ -24,7 +23,6 @@ export default function RenderAddress() {
     isLoading,
     error,
   } = useClientById(selectedClientId || "");
-  
 
   const [toggles, setToggles] = useState({
     clienteRelacionado: false,
@@ -46,27 +44,6 @@ export default function RenderAddress() {
     },
     [setFormData],
   );
-
-  const updateReference = (
-    index: number,
-    field: keyof Reference,
-    value: string,
-  ) => {
-    if (!isEditing) return;
-    setFormData((prev) => {
-      const current = [...(prev.reference || client?.reference || [])];
-      while (current.length <= index) {
-        current.push({
-          identificacion: "",
-          fullnames: "",
-          relationship: "",
-          phone: 0,
-        } as unknown as Reference);
-      }
-      current[index] = { ...current[index], [field]: value };
-      return { ...prev, reference: current };
-    });
-  };
 
   if (!selectedClientId) {
     return (
@@ -153,8 +130,6 @@ export default function RenderAddress() {
                       ? formData.reference || client?.reference || []
                       : client?.reference || []
                   }
-                  isEditing={isEditing}
-                  updateReference={updateReference}
                 />
               </section>
             </CompactTable>

@@ -1,3 +1,4 @@
+import { useClientContext } from "@/contexts/client-context";
 import { Reference } from "@/types/typeClients";
 
 const parentescos = [
@@ -24,17 +25,31 @@ const styles = {
 
 export default function FormFamily({
   references,
-  isEditing,
-  updateReference,
 }: {
   references: Reference[];
-  isEditing: boolean;
-  updateReference: (
+}) {
+  const { setFormData, isEditing } = useClientContext();
+
+  const updateReference = (
     index: number,
     field: keyof Reference,
     value: string,
-  ) => void;
-}) {
+  ) => {
+    if (!isEditing) return;
+    setFormData((prev) => {
+      const current = [...(prev.reference || references || [])];
+      while (current.length <= index) {
+        current.push({
+          identificacion: "",
+          fullnames: "",
+          relationship: "",
+          phone: 0,
+        } as unknown as Reference);
+      }
+      current[index] = { ...current[index], [field]: value };
+      return { ...prev, reference: current };
+    });
+  };
 
   return (
     <div className={styles.container}>
