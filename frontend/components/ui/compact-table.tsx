@@ -96,9 +96,9 @@ export function TableSearchHeader({
   );
 }
 
-export function Headers({ headers }: { headers: React.ReactNode[] }) {
+export function Headers({ headers, className }: { headers: React.ReactNode[], className?: string }) {
   return (
-    <div className="grid grid-cols-subgrid col-span-full bg-indigo-50/20 dark:bg-indigo-900/10 border-b border-indigo-100 dark:border-indigo-900/30">
+    <div className={cn("grid grid-cols-subgrid col-span-full bg-indigo-50/20 dark:bg-indigo-900/10 border-b border-indigo-100 dark:border-indigo-900/30", className)}>
       {headers.map((header, index) => (
         <div
           key={index}
@@ -114,9 +114,9 @@ export function Headers({ headers }: { headers: React.ReactNode[] }) {
   );
 }
 
-export function PaymentRow({ cells }: { cells: React.ReactNode[] }) {
+export function PaymentRow({ cells, className }: { cells: React.ReactNode[], className?: string }) {
   return (
-    <div className="grid grid-cols-subgrid col-span-full hover:bg-indigo-50/10 transition-colors border-b border-indigo-50 dark:border-indigo-900/20">
+    <div className={cn("grid grid-cols-subgrid col-span-full hover:bg-indigo-50/10 transition-colors border-b border-indigo-50 dark:border-indigo-900/20", className)}>
       {cells.map((cell, index) => (
         <div
           key={index}
