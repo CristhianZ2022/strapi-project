@@ -8,6 +8,7 @@ const CLIENT_POPULATE = [
   "populate[plans]=true",
   "populate[reference]=true",
   "populate[discountLaw]=true",
+  "populate[contact]=true",
   "populate[files][populate][file]=true",
 ].join("&");
 
@@ -88,12 +89,24 @@ export async function updateClientById(
     }
 
     if (payload.discountLaw) {
-      if (
-        !payload.discountLaw.disability && 
-        !payload.discountLaw.oldAge
-      ) {
+      if (!payload.discountLaw.disability && !payload.discountLaw.oldAge) {
         payload.discountLaw = null;
+      } else {
+        // Strip internal Strapi component id before sending
+        payload.discountLaw = {
+          disability: payload.discountLaw.disability,
+          oldAge: payload.discountLaw.oldAge,
+        };
       }
+    }
+
+    // Strip internal Strapi component id from contact before sending
+    if (payload.contact) {
+      payload.contact = {
+        telephone: payload.contact.telephone ?? "",
+        phoneSms: payload.contact.phoneSms ?? "",
+        phoneTwo: payload.contact.phoneTwo ?? "",
+      };
     }
 
     // Serialize file components: send media ID reference instead of full object
@@ -122,7 +135,7 @@ export async function updateClientById(
 }
 
 export async function uploadFileToStrapi(
-  formData: FormData
+  formData: FormData,
 ): Promise<StrapiMedia[]> {
   try {
     return await strapiJson<StrapiMedia[]>("/api/upload", {
