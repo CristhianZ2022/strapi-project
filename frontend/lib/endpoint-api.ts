@@ -1,6 +1,13 @@
 "use server";
 
-import { Client, User, Plan, FileItem, StrapiMedia } from "@/types/typeClients";
+import type {
+  Client,
+  User,
+  Plan,
+  FileItem,
+  StrapiMedia,
+  applied_discount,
+} from "@/types/typeClients";
 import { strapiJson } from "./api";
 
 /** Deep populate query for client with nested media in file components */
@@ -10,6 +17,7 @@ const CLIENT_POPULATE = [
   "populate[discountLaw]=true",
   "populate[contact]=true",
   "populate[files][populate][file]=true",
+  "populate[applied_discount]=true",
 ].join("&");
 
 export async function fetchClients(): Promise<{ data: Client[] }> {
@@ -67,6 +75,20 @@ export async function fetchPlans() {
   }
 }
 
+export async function fetchAppliedDiscount() {
+  try {
+    const response = await strapiJson<{
+      data: applied_discount[];
+      meta: Record<string, unknown>;
+    }>("/api/applied-discounts");
+
+    return { data: response.data };
+  } catch (error) {
+    console.error("Error fetching applied discounts:", error);
+    return { data: [] };
+  }
+}
+
 export async function updateClientById(
   documentId: string,
   data: Partial<Omit<Client, "documentId">>,
@@ -107,6 +129,10 @@ export async function updateClientById(
         phoneSms: payload.contact.phoneSms ?? "",
         phoneTwo: payload.contact.phoneTwo ?? "",
       };
+    }
+
+    if ("applied_discount" in payload) {
+      payload.applied_discount = (payload.applied_discount?.documentId || null) as unknown as applied_discount;
     }
 
     // Serialize file components: send media ID reference instead of full object

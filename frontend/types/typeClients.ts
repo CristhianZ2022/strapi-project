@@ -21,6 +21,8 @@ export interface Client {
   files: FileItem[];
   automaticInvoice: boolean;
   contact: Contact;
+  entity: string;
+  applied_discount: applied_discount;
 }
 
 export interface DiscountLaw {
@@ -54,6 +56,13 @@ export interface Plan {
   valor: number;
   descuento: number;
   meses: number;
+}
+
+export interface applied_discount {
+  documentId: string;
+  name: string;
+  value: number;
+  description: string;
 }
 
 export interface StrapiMedia {
