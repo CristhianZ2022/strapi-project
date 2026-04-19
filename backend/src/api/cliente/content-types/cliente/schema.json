@@ -95,6 +95,18 @@
       "type": "component",
       "component": "component.contact",
       "repeatable": false
+    },
+    "entity": {
+      "type": "enumeration",
+      "enum": [
+        "PUBLICA",
+        "PRIVADA"
+      ]
+    },
+    "applied_discount": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::applied-discount.applied-discount"
     }
   }
 }

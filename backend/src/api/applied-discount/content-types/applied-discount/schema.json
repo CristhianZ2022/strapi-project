@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "applied_discounts",
+  "info": {
+    "singularName": "applied-discount",
+    "pluralName": "applied-discounts",
+    "displayName": "appliedDiscount"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "value": {
+      "type": "decimal",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

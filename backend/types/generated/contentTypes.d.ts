@@ -430,6 +430,37 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAppliedDiscountAppliedDiscount
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'applied_discounts';
+  info: {
+    displayName: 'appliedDiscount';
+    pluralName: 'applied-discounts';
+    singularName: 'applied-discount';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::applied-discount.applied-discount'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    value: Schema.Attribute.Decimal & Schema.Attribute.Required;
+  };
+}
+
 export interface ApiClienteCliente extends Struct.CollectionTypeSchema {
   collectionName: 'clientes';
   info: {
@@ -442,6 +473,10 @@ export interface ApiClienteCliente extends Struct.CollectionTypeSchema {
   };
   attributes: {
     apellidos: Schema.Attribute.String;
+    applied_discount: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::applied-discount.applied-discount'
+    >;
     automaticCut: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     automaticInvoice: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<true>;
@@ -454,6 +489,7 @@ export interface ApiClienteCliente extends Struct.CollectionTypeSchema {
     currentAge: Schema.Attribute.Date;
     discountLaw: Schema.Attribute.Component<'component.discount-law', false>;
     email: Schema.Attribute.Email;
+    entity: Schema.Attribute.Enumeration<['PUBLICA', 'PRIVADA']>;
     estado: Schema.Attribute.Enumeration<
       ['ACTIVO', 'CORTADO', 'SUSPENDIDO', 'TERMINADO']
     >;
@@ -1061,6 +1097,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::applied-discount.applied-discount': ApiAppliedDiscountAppliedDiscount;
       'api::cliente.cliente': ApiClienteCliente;
       'api::home-page.home-page': ApiHomePageHomePage;
       'api::plan.plan': ApiPlanPlan;
